@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  user
+}
+ 
+model CashRegister {
+  id             String    @id @default(uuid())
+  openedBy       String // Usuario (Admin) que abre la caja
+  closedBy       String? // Usuario que cierra la caja (puede ser el mismo admin)
+  openTime       DateTime // Hora de apertura
+  closeTime      DateTime? // Hora de cierre
+  openingBalance Float     @default(0) // Efectivo inicial
+  closingBalance Float     @default(0) // Efectivo al cierre
+  totalSales     Float     @default(0) // Total de ventas en la sesión
+  totalRentals   Float     @default(0) // Total de alquileres en la sesión
+  totalExpenses  Float     @default(0) // Total de gastos en la sesión
+  status         Boolean // Estado de la caja (abierta, cerrada)
+  sales          Sale[] // Ventas realizadas durante la sesión
+  rentals        Rental[] // Alquileres realizados durante la sesión
+  expenses       Expense[] // Gastos realizados durante la sesión
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Sale {
+  id             String        @id @default(uuid())
+  total          Float // Total de la venta
+  paymentMethod  String // Método de pago (efectivo, tarjeta, etc.)
+  saleTime       DateTime      @default(now()) // Fecha y hora de la venta
+  products       SaleProduct[] // Relación con los productos vendidos
+  cashRegister   CashRegister  @relation(fields: [cashRegisterId], references: [id])
+  cashRegisterId String
+}
+
+model SaleProduct {
+  id        String  @id @default(uuid())
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+  sale      Sale    @relation(fields: [saleId], references: [id])
+  saleId    String
+  quantity  Int // Cantidad de este producto vendido
+  total     Float // Total por este producto (cantidad * precio)
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  description   String   @unique // Descripción 
+  purchasePrice Float // Precio de compra
+  profitMargin  Float // Margen de beneficio
+  salePrice     Float // Precio de venta
+  profit        Float // Beneficio
+  stock         Int // Cantidad disponible en stock
+  state         Boolean // Estado del producto
+  slug          String   @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  purchases PurchaseProduct[] // Relación con las compras de este producto
+  sales     SaleProduct[] // Relación con las ventas de este producto
+}
+
+model Rental {
+  id             String       @id @default(uuid())
+  customerName   String // Nombre del cliente
+  documentDni    String // Documento del cliente
+  phone          String // Celuar del cliente
+  startTime      DateTime // Hora de inicio del alquiler
+  endTime        DateTime // Hora de fin del alquiler
+  total          Float // Total por el alquiler
+  description    String?
+  registeredBy   String // Usuario que registró el alquiler
+  cashRegister   CashRegister @relation(fields: [cashRegisterId], references: [id])
+  cashRegisterId String
+}
+
+model Expense {
+  id             String       @id @default(uuid())
+  description    String // Descripción del gasto
+  amount         Float // Monto del gasto
+  expenseTime    DateTime // Fecha y hora del gasto
+  cashRegister   CashRegister @relation(fields: [cashRegisterId], references: [id])
+  cashRegisterId String
+}
+
+model Purchase {
+  id             String            @id @default(uuid())
+  purchaseDate   DateTime          @default(now()) // Fecha de la compra
+  products       PurchaseProduct[] // Productos comprados
+  total          Float // Total de la compra
+  documentNumber String?
+}
+
+model PurchaseProduct {
+  id         String   @id @default(uuid())
+  product    Product  @relation(fields: [productId], references: [id])
+  productId  String
+  purchase   Purchase @relation(fields: [purchaseId], references: [id])
+  purchaseId String
+  quantity   Int // Cantidad comprada
+  costPrice  Float // Precio unitario de compra
+  total      Float // Total por este producto (cantidad * precio de compra)
+}
+
+model User {
+  id       String  @id @default(uuid())
+  name     String
+  username String  @unique
+  password String
+  status   Boolean
+  role     Role    @default(user)
+}
