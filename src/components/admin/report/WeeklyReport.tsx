@@ -57,7 +57,6 @@ export const WeeklyReport = () => {
   useEffect(() => {
     if (viewDete !== '') {
       if (control !== viewDete) {
-        console.count('handleReportWeekly');
         setControl(viewDete)
         handleReportWeekly();
       }

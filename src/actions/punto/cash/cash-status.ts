@@ -1,7 +1,7 @@
 'use server';
 
 import prisma from '@/lib/prisma';
-import { addOneDay, currentDateServer, normalizeDate } from '@/utils';
+import { normalizeDate, separateDateSear, separateDateTimeEnd } from '@/utils';
 
 interface Props {
     search: string;
@@ -9,22 +9,16 @@ interface Props {
 
 export const cashStatus = async ({ search }: Props) => {
 
-    try { 
+    try {
 
-        let startOfDay = new Date(search);
-
-        if (!isValidDate(startOfDay)) {
-            startOfDay = currentDateServer();
-        } else {
-            startOfDay = addOneDay(startOfDay, 1)
-        }
-
-        startOfDay.setHours(0, 0, 0, 0);
+        const startDate = separateDateSear(`${search}`);
+        const endDate = separateDateTimeEnd(`${search}`);
 
         const cashRegister = await prisma.cashRegister.findFirst({
             where: {
                 openTime: {
-                    gte: startOfDay
+                    gte: startDate,
+                    lte: endDate,
                 },
             },
         });

@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import { cashStatus } from '@/actions';
-import { capitalize, currencyFormat, currentDate, normalizeDate } from '@/utils';
+import { capitalize, currencyFormat, currentDate, dateServerSale, dateServerStart, normalizeDate } from '@/utils';
 import { ActionsCaja } from './ui/ActionsCaja';
 import { ActionsOpenCaja } from './ui/ActionsOpenCaja';
 
 export default async function CajaPage() {
 
-  const { cashRegister, gastos, subTotal } = await cashStatus({ search: '' });
+  const { cashRegister, gastos, subTotal } = await cashStatus({ search: dateServerStart() });
 
   return (
     <div className='fade-in'>

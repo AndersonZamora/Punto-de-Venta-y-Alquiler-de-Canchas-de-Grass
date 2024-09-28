@@ -46,8 +46,7 @@ export const authConfig: NextAuthConfig = {
     providers: [
         Credentials({
             async authorize(credentials) {
-                console.log(credentials)
-
+                
                 const parsedCredentials = z
                     .object({ email: z.string().min(4), password: z.string().min(6) })
                     .safeParse(credentials);

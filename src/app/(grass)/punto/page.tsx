@@ -1,11 +1,11 @@
 import { IoBaseballSharp, IoCube, IoKeyOutline, IoPodiumOutline, IoPricetagsOutline, IoStorefrontOutline } from 'react-icons/io5';
 import { cashStatus } from '@/actions';
 import { ItemsCard } from '@/components';
-import { currencyFormat } from '@/utils';
+import { currencyFormat, dateServerSale, dateServerStart } from '@/utils';
 
 export default async function PuntoPage() {
 
-  const { cashRegister } = await cashStatus({ search: '' });
+  const { cashRegister } = await cashStatus({ search: dateServerStart() });
 
   const isOpe = (cashRegister?.status === true);
 

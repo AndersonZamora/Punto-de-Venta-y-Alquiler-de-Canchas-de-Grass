@@ -53,7 +53,6 @@ export const MonthlyReport = () => {
   useEffect(() => {
     if (viewDate !== '') {
       if (control !== viewDate) {
-        console.count('handlerMonthlyReport');
         setControl(viewDate);
         handlerMonthlyReport();
       }

@@ -85,7 +85,6 @@ export const TablaModal = ({ openModal, onCloseModal }: Props) => {
 
     useEffect(() => {
         if (openModal) {
-            console.count('getProducts');
             handleGetProduct();
         }
     }, [openModal]);

@@ -78,7 +78,6 @@ export const RangesReport = () => {
 
   useEffect(() => {
     if (startTime !== '' && endTime !== '') {
-      console.count('handleGetReport');
       handleGetReport();
     }
   }, [startTime, endTime])

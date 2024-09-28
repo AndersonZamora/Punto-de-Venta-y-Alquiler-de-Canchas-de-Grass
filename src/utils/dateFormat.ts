@@ -87,6 +87,19 @@ export const dateServerSale = () => {
     return adjustedDate.toISOString()
 }
 
+export const dateServerStart = () => {
+
+    const { fecha, hora } = getDated();
+
+    const [year, month, day] = fecha.split('-').map(Number);
+
+    const localDate = new Date(year, month - 1, day, 0, 0, 0);
+
+    const adjustedDate = new Date(localDate.getTime() - (localDate.getTimezoneOffset() * 60000));
+
+    return adjustedDate.toISOString()
+}
+
 export const dateServerPurchase = (dateEntry: string) => {
 
     const { hora } = getDated();
@@ -122,6 +135,20 @@ export const separateDateTime = (dateEntry: string) => {
     const [hours, minutes] = hora.split(':').map(Number);
 
     const localDate = new Date(year, month - 1, day, hours, minutes, 0);
+
+    const adjustedDate = new Date(localDate.getTime() - (localDate.getTimezoneOffset() * 60000));
+
+    return adjustedDate.toISOString()
+}
+
+export const separateDateSear = (dateEntry: string) => {
+
+    const [fecha, hora] = dateEntry.split("T");
+
+    const [year, month, day] = fecha.split('-').map(Number);
+    const [hours, minutes] = hora.split(':').map(Number);
+
+    const localDate = new Date(year, month - 1, day, 0, 0, 0);
 
     const adjustedDate = new Date(localDate.getTime() - (localDate.getTimezoneOffset() * 60000));
 
