@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { cashStatus } from '@/actions';
-import { capitalize, currencyFormat, currentDate, dateServerSale, dateServerStart, normalizeDate } from '@/utils';
+import { capitalize, currencyFormat, currentDate, dateServerStart, normalizeDate } from '@/utils';
 import { ActionsCaja } from './ui/ActionsCaja';
 import { ActionsOpenCaja } from './ui/ActionsOpenCaja';
 

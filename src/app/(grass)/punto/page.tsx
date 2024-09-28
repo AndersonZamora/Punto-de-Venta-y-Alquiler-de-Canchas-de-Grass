@@ -1,7 +1,7 @@
 import { IoBaseballSharp, IoCube, IoKeyOutline, IoPodiumOutline, IoPricetagsOutline, IoStorefrontOutline } from 'react-icons/io5';
 import { cashStatus } from '@/actions';
 import { ItemsCard } from '@/components';
-import { currencyFormat, dateServerSale, dateServerStart } from '@/utils';
+import { currencyFormat, dateServerStart } from '@/utils';
 
 export default async function PuntoPage() {
 
