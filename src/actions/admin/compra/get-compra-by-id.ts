@@ -1,7 +1,7 @@
 'use server';
 
 import prisma from '@/lib/prisma';
-import { addOneDay, normalizeDate } from '@/utils';
+import { normalizeDate } from '@/utils';
 
 interface Props {
     id: string
@@ -29,7 +29,6 @@ export const getCompraById = async ({ id }: Props) => {
                         }
                     }
                 },
-
             }
         });
 
@@ -51,7 +50,6 @@ export const getCompraById = async ({ id }: Props) => {
         }
 
     } catch (error) {
-        console.log(error);
         return {
             status: true,
             messsage: 'Error no controlado - contacte al administrador',

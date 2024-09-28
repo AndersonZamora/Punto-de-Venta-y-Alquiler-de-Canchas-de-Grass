@@ -1,7 +1,7 @@
+import { IoTrashOutline } from 'react-icons/io5'
 import { Quantity } from '@/components';
 import { ISaleProduct } from '@/interfaces'
 import { currencyFormat } from '@/utils';
-import { IoTrashOutline } from 'react-icons/io5'
 
 interface Props {
     saleProduct: ISaleProduct;

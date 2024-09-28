@@ -1,8 +1,8 @@
-import { getUserById } from "@/actions";
-import { TitleAdmin } from "@/components";
-import { notFound } from "next/navigation";
-import { IoPersonOutline } from "react-icons/io5";
-import { UserUpdateForm } from "./ui/UserUpdateForm";
+import { notFound } from 'next/navigation';
+import { getUserById } from '@/actions';
+import { TitleAdmin } from '@/components';
+import { IoPersonOutline } from 'react-icons/io5';
+import { UserUpdateForm } from './ui/UserUpdateForm';
 
 interface Props {
     params: {

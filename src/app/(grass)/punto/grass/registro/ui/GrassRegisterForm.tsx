@@ -37,7 +37,7 @@ export const GrassRegisterForm = () => {
     }
 
     return (
-        <form className='fade-in' onSubmit={handleSubmit(onSutmit)}>
+        <form className='fade-in' onSubmit={handleSubmit(onSutmit)} noValidate>
             <div className="grid grid-cols-1 gap-2 sm:gap-5 sm:grid-cols-2">
                 <div className="flex flex-col mb-2">
                     <span>Nombre</span>
@@ -140,7 +140,7 @@ export const GrassRegisterForm = () => {
                     className="p-2 border rounded-md bg-gray-200 h-16"
                     {...register('description', {
                         required: { value: true, message: 'Ingrese detalle' },
-                        pattern: { value: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s.#\-_°]+$/, message: 'No valido' },
+                        pattern: { value: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s.#\-_:°]+$/, message: 'No valido' },
                         maxLength: { value: 100, message: 'Maximo 100 letras' }
                     })}
                 />

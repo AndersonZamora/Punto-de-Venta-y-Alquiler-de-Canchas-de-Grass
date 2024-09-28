@@ -17,8 +17,7 @@ export const LoginForm = () => {
     }, [state])
 
     return (
-        <form action={dispath} className="flex flex-col">
-
+        <form action={dispath} className="flex flex-col" noValidate>
             <label htmlFor="email">Usuario</label>
             <input
                 className="px-5 py-2 border bg-gray-200 rounded mb-5"

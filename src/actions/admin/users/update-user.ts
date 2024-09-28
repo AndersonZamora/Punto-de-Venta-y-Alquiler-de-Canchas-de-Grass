@@ -1,8 +1,8 @@
 'use server';
 
-import { IUser } from "@/interfaces";
-import prisma from "@/lib/prisma"
-import { revalidatePath } from "next/cache";
+import { revalidatePath } from 'next/cache';
+import { IUser } from '@/interfaces';
+import prisma from '@/lib/prisma'
 
 export const updateUser = async (user: IUser) => {
 

@@ -1,6 +1,6 @@
 'use server';
 
-import prisma from "@/lib/prisma";
+import prisma from '@/lib/prisma';
 
 export const getProductsPunto = async () => {
 
@@ -8,9 +8,9 @@ export const getProductsPunto = async () => {
 
         const products = await prisma.product.findMany({
             where: {
-                // stock: {
-                //     gt: 0
-                // },
+                stock: {
+                    gt: 0
+                },
                 state: true
             },
             orderBy: [

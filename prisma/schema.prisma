@@ -11,7 +11,7 @@ enum Role {
   admin
   user
 }
- 
+
 model CashRegister {
   id             String    @id @default(uuid())
   openedBy       String // Usuario (Admin) que abre la caja
@@ -117,4 +117,11 @@ model User {
   password String
   status   Boolean
   role     Role    @default(user)
+}
+
+model Utility {
+  id        String   @id @default(uuid())
+  total     Float    @default(0)
+  startTime DateTime // Hora de inicio del registro
+  endTime   DateTime // Hora de fin del registro
 }

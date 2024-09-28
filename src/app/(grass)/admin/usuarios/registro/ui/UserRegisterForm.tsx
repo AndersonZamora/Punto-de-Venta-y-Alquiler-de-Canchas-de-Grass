@@ -29,9 +29,8 @@ export const UserRegisterForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSutmit)}>
+    <form onSubmit={handleSubmit(onSutmit)} noValidate>
       <div className="grid grid-cols-1 gap-2 sm:gap-5 sm:grid-cols-2">
-
         <div className="flex flex-col mb-2">
           <span>Nombre completo</span>
           <input
@@ -70,8 +69,8 @@ export const UserRegisterForm = () => {
             className="p-2 border rounded-md bg-gray-200"
             {...register('password', {
               required: { value: true, message: 'Contraseña requerida' },
-              pattern: { value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,<.>]).{6,}$/, message: 'La contraseña debe tenere al menos, una letra mayúscula, una letra minúscula, un número, un carácter especial' },
-              minLength: { value: 8, message: 'Longitud mínima de 8 caracteres' },
+              pattern: { value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,<.>]).{4,}$/, message: 'La contraseña debe tenere al menos, una letra mayúscula, una letra minúscula, un número, un carácter especial' },
+              minLength: { value: 4, message: 'Longitud mínima de 4 caracteres' },
               maxLength: { value: 10, message: 'Longitud maxima de 10 caracteres' }
             })}
           />

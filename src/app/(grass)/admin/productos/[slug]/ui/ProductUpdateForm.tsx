@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IProduct } from '@/interfaces';
-import { errorAlert } from '@/utils';
+import { closeAlert, errorAlert, loadingAlert } from '@/utils';
 import clsx from 'clsx';
 import { updateProduct } from '@/actions/admin/product/update-product';
 import { LoadingPage } from '@/components';
@@ -22,12 +22,15 @@ export const ProductUpdateForm = ({ product }: Props) => {
 
   const onSutmit = async (data: IProduct) => {
     const { status, messsage } = await updateProduct({ ...data });
+    loadingAlert('Actualizando...')
     setLoading(true);
     if (!status) {
       setLoading(false);
       errorAlert(messsage);
       return;
     }
+
+    closeAlert();
 
     window.location.replace('/admin/productos');
   }
@@ -65,8 +68,7 @@ export const ProductUpdateForm = ({ product }: Props) => {
       {
         (loading) ? (<LoadingPage />) :
           (
-            <form onSubmit={handleSubmit(onSutmit)}>
-           
+            <form onSubmit={handleSubmit(onSutmit)} noValidate>
               <div className="fadeIn grid grid-cols-1 gap-2 sm:gap-5 sm:grid-cols-2">
                 <div className="flex flex-col mb-2">
                   <span>Descripción</span>
@@ -151,7 +153,6 @@ export const ProductUpdateForm = ({ product }: Props) => {
                     })}
                   />
                   {errors.profit && (<span className="text-red-500 font-mono">{errors.profit?.message}</span>)}
-
                 </div>
                 <div className="flex flex-row items-center mb-2 mt-0 md:mt-5">
                   <label
@@ -162,7 +163,6 @@ export const ProductUpdateForm = ({ product }: Props) => {
                       type="checkbox"
                       className="border-gray-500 before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-blue-500 checked:bg-blue-500 checked:before:bg-blue-500 hover:before:opacity-10"
                       id="checkbox"
-                      // checked
                       {...register('state')}
                     />
                     <div className="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">

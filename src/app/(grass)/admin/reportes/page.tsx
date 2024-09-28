@@ -1,11 +1,7 @@
-import { currentDate } from "@/utils";
-import { ContentReport } from "./ui/ContentReport";
+import { currentDate } from '@/utils';
+import { ContentReport } from './ui/ContentReport';
 
 export default function ReportesPage() {
-
-  const handleTap = () => {
-    
-  }
 
   return (
     <div className="px-0 mx-auto fade-in">

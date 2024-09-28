@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { IoEye, IoReloadOutline } from 'react-icons/io5';
 import { LoadingPage, Pagination } from '@/components';
 import { IPurchase } from '@/interfaces';
 import { capitalize, closeAlert, currencyFormat, loadingAlert } from '@/utils';
-import Link from 'next/link';
 
 interface Props {
     purchases: IPurchase[];

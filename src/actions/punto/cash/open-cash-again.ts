@@ -1,8 +1,8 @@
 'use server';
 
-import { auth } from "@/auth.config";
-import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { revalidatePath } from 'next/cache';
+import { auth } from '@/auth.config';
+import prisma from '@/lib/prisma';
 
 interface Props {
     id: string;

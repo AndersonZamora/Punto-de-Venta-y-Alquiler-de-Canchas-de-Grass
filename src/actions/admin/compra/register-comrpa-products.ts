@@ -1,8 +1,8 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
 import { dateServerPurchase } from '@/utils';
-import { revalidatePath } from 'next/cache';
 
 interface SaleP {
     id: string;
@@ -67,6 +67,7 @@ export const registerComrpaProducts = async ({
         }
 
         revalidatePath('/admin/compras');
+        revalidatePath('/punto/bodega');
 
         return {
             status: true,
@@ -74,7 +75,6 @@ export const registerComrpaProducts = async ({
         }
 
     } catch (error) {
-        console.log(error)
         return {
             status: false,
             messsage: 'Error no controlado - contacte al administrador'

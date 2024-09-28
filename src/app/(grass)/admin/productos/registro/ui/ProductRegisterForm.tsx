@@ -63,7 +63,7 @@ export const ProductRegisterForm = () => {
   }, [watch, setValue])
 
   return (
-    <form className='fade-in' onSubmit={handleSubmit(onSutmit)}>
+    <form className='fade-in' onSubmit={handleSubmit(onSutmit)} noValidate>
       <div className="grid grid-cols-1 gap-2 sm:gap-5 md:grid-cols-2">
         <div className="flex flex-col mb-2">
           <span>Descripción</span>

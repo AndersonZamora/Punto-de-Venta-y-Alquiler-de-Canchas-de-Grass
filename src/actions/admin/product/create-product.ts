@@ -47,12 +47,10 @@ export const createProduct = async (product: IProduct) => {
         }
 
     } catch (error) {
-        console.log(error)
         return {
             status: false,
             product: null,
             messsage: 'Error no controlado - contacte al administrador',
         }
-
     }
 }

@@ -5,7 +5,7 @@ import { currencyFormat } from '@/utils';
 
 export default async function PuntoPage() {
 
-  const { cashRegister } = await cashStatus();
+  const { cashRegister } = await cashStatus({ search: '' });
 
   const isOpe = (cashRegister?.status === true);
 
@@ -34,17 +34,15 @@ export default async function PuntoPage() {
             title={'Total de alquiler'}
             classNa='mb-6'
             quantity={`${cashRegister?.totalRentals ? currencyFormat(cashRegister.totalRentals) : '0'}`}
-            rederi={'/punto/bodega'}
+            rederi={'/punto/grass'}
           />
-
           <ItemsCard
             icon={<IoPodiumOutline className='w-8 h-8 text-white' />}
             title={'Total de gastos'}
             classNa='mb-6'
             quantity={`${cashRegister?.totalExpenses ? currencyFormat(cashRegister.totalExpenses) : '0'}`}
-            rederi={'/punto/gastos'}
+            rederi={'/punto'}
           />
-
           <ItemsCard
             icon={<IoStorefrontOutline className='w-8 h-8 text-white' />}
             title={'Bodega'}

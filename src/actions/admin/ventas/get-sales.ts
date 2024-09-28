@@ -1,21 +1,17 @@
 'use server';
 
 import prisma from '@/lib/prisma';
-import { currentDateServer } from '@/utils';
 
-export const getSales = async () => {
+interface Props {
+    id: string
+}
+
+export const getSales = async ({ id }: Props) => {
 
     try {
 
-        const searchCash = currentDateServer();
-        searchCash.setHours(0, 0, 0, 0);
-
         const cashRegister = await prisma.cashRegister.findFirst({
-            where: {
-                openTime: {
-                    gte: searchCash
-                },
-            },
+            where: { id }
         });
 
         if (!cashRegister) {

@@ -35,7 +35,6 @@ export const createUser = async () => {
         }
 
     } catch (error) {
-        console.log(error)
         return {
             status: false,
             message: 'Error no controlado - contacte al administrador',

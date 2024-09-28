@@ -58,7 +58,7 @@ export const CashModal = ({ openModalPrice, onCloseModal }: Props) => {
             </button>
           </header>
           <div className="p-2 text-center">
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit)} noValidate>
 
               <div className="flex flex-col mb-2">
                 <span>Saldo de apertura</span>

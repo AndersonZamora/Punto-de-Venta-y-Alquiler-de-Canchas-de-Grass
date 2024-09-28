@@ -32,7 +32,6 @@ export const getCompras = async ({
             }
         }
 
-
         const startOfDay = new Date(date);
 
         startOfDay.setHours(0, 0, 0, 0);
@@ -75,7 +74,6 @@ export const getCompras = async ({
         }
 
     } catch (error) {
-        console.log(error);
         return {
             status: true,
             currentPage: 0,

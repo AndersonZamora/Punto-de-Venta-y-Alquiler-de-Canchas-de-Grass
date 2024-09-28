@@ -1,8 +1,9 @@
 'use server';
 
-import { IProduct } from '@/interfaces';
+
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { IProduct } from '@/interfaces';
 
 export const updateProduct = async (product: IProduct) => {
 
@@ -47,12 +48,10 @@ export const updateProduct = async (product: IProduct) => {
         }
 
     } catch (error) {
-        console.log(error)
         return {
             status: false,
             product: null,
             messsage: 'Error no controlado - contacte al administrador',
         }
-
     }
 }

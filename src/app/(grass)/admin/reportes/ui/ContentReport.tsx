@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import clsx from 'clsx';
 import { CustomTabPanel } from './CustomTabPanel';
-import { DailyReport, WeeklyReport, MonthlyReport } from '@/components';
+import { WeeklyReport, MonthlyReport } from '@/components';
+import { RangesReport } from '../../../../../components/admin/report/RangesReport';
 
 export const ContentReport = () => {
 
@@ -39,6 +40,19 @@ export const ContentReport = () => {
                     >
                         Mensual
                     </button>
+                    <button
+                        onClick={() => setOpenTab(3)}
+                        className={
+                            clsx(
+                                'flex-1 py-2 px-4 rounded-md focus:outline-none focus:shadow-outline-blue transition-all duration-300',
+                                {
+                                    'bg-blue-600 text-white': openTab === 3
+                                }
+                            )
+                        }
+                    >
+                        Rango
+                    </button>
                 </div>
             </div>
             <CustomTabPanel title={'Reporte semanal'} index={openTab} value={1}>
@@ -46,6 +60,9 @@ export const ContentReport = () => {
             </CustomTabPanel>
             <CustomTabPanel title={'Reporte mensual'} index={openTab} value={2}>
                 <MonthlyReport />
+            </CustomTabPanel>
+            <CustomTabPanel title={'Reporte por rango de fechas'} index={openTab} value={3}>
+                <RangesReport />
             </CustomTabPanel>
         </>
     )

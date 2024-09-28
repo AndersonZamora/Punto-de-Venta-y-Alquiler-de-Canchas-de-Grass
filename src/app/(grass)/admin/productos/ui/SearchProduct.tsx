@@ -69,7 +69,7 @@ export const SearchProduct = ({ listProducts, totalPages }: Props) => {
                             <div className="flex flex-col md:flex-row items-center justify-between mb-5 mt-5">
                                 <div className="w-full max-w-sm min-w-[200px] relative">
                                     <div className="relative">
-                                        <form onSubmit={(value) => handleOnSubmit(value.nativeEvent)}>
+                                        <form onSubmit={(value) => handleOnSubmit(value.nativeEvent)} noValidate>
                                             <input
                                                 name='search'
                                                 value={dateSearch}

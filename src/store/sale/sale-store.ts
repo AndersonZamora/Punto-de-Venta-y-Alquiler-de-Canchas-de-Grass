@@ -1,6 +1,6 @@
-import type { IProduct, ISaleProduct } from "@/interfaces";
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import type { IProduct, ISaleProduct } from '@/interfaces';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface State {
 
@@ -64,7 +64,6 @@ export const useSaleStore = create<State>()(
             addProductTocart: (product: ISaleProduct) => {
                 const { sale } = get();
 
-                // Revisar si existe el producto
                 const productInCart = sale.some(
                     (item) => item.id === product.id
                 )

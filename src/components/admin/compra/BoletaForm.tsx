@@ -25,16 +25,12 @@ export const BoletaForm = ({ sales }: Props) => {
 
     const onSutmit = async (data: InputsBoleta) => {
 
-        console.log(data.dateEntry);
-
-        loadingAlert('Registrando compra');
-
+        loadingAlert('Registrando compra...');
 
         const { status, messsage } = await registerComrpaProducts(
             {
                 ...data,
                 dateEntry: data.dateEntry,
-                // dateEntry: addOneHour(new Date(`${data.dateEntry}`),0).toISOString(),
                 sales: sales
             }
         );
@@ -50,8 +46,7 @@ export const BoletaForm = ({ sales }: Props) => {
     }
 
     return (
-        <form onSubmit={handleSubmit(onSutmit)}>
-
+        <form onSubmit={handleSubmit(onSutmit)} noValidate>
             <div className="flex flex-col mb-2 ">
                 <input
                     type="text"

@@ -20,6 +20,9 @@ export { LoadingPage } from './ui/loading-page/LoadingPage';
 export { Pagination } from './ui/pagination/Pagination';
 export { PaginationModal } from './ui/pagination/PaginationModal';
 
-export { DailyReport } from './admin/report/DailyReport';
+export { RangesReport } from './admin/report/RangesReport';
 export { WeeklyReport } from './admin/report/WeeklyReport';
 export { MonthlyReport } from './admin/report/MonthlyReport';
+
+export { LineChartComponent } from './admin/report/LineChartComponent';
+

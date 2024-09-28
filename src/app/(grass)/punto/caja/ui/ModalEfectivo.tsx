@@ -1,6 +1,5 @@
 'use client'
 
-
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import clsx from 'clsx';
@@ -60,7 +59,7 @@ export const ModalEfectivo = ({ openModalPrice, onCloseModalEfec }: Props) => {
                         </button>
                     </header>
                     <div className="p-2 text-center">
-                        <form onSubmit={handleSubmit(onSubmit)}>
+                        <form onSubmit={handleSubmit(onSubmit)} noValidate>
                             <div className="flex flex-col mb-4">
                                 <span>Descripción</span>
                                 <input

@@ -1,4 +1,4 @@
-import { DataProfile } from "./ui/DataProfile";
+import { DataProfile } from './ui/DataProfile';
 
 export default function ProfilePage() {
 

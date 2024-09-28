@@ -1,7 +1,7 @@
 'use client';
 
-import { useUIStore } from '@/store';
 import Link from 'next/link';
+import { useUIStore } from '@/store';
 import { IoCloseCircleSharp, IoMenu, IoPersonCircleOutline } from 'react-icons/io5';
 
 export const TopMenu = () => {

@@ -1,13 +1,24 @@
 'use server';
 
-import prisma from "@/lib/prisma";
-import { currentDateServer, normalizeDate } from "@/utils";
+import prisma from '@/lib/prisma';
+import { addOneDay, currentDateServer, normalizeDate } from '@/utils';
 
-export const cashStatus = async () => {
+interface Props {
+    search: string;
+}
 
-    try {
- 
-        const startOfDay = currentDateServer();
+export const cashStatus = async ({ search }: Props) => {
+
+    try { 
+
+        let startOfDay = new Date(search);
+
+        if (!isValidDate(startOfDay)) {
+            startOfDay = currentDateServer();
+        } else {
+            startOfDay = addOneDay(startOfDay, 1)
+        }
+
         startOfDay.setHours(0, 0, 0, 0);
 
         const cashRegister = await prisma.cashRegister.findFirst({
@@ -24,8 +35,7 @@ export const cashStatus = async () => {
                 message: 'Actualmente no exite una caja abierta',
                 gastos: [],
                 cashRegister: null,
-                total: 0,
-                subTotal:0,
+                subTotal: 0,
             }
         }
 
@@ -35,11 +45,7 @@ export const cashStatus = async () => {
 
         const sales = cashRegister.totalSales || 0;
         const rentals = cashRegister.totalRentals || 0;
-        const opening = cashRegister.openingBalance || 0;
-        const expenses = cashRegister.totalExpenses || 0;
-
         const subTotal = sales + rentals;
-        const total = opening + subTotal - expenses;
 
         return {
             status: true,
@@ -52,7 +58,6 @@ export const cashStatus = async () => {
             })),
             cashRegister,
             subTotal: +parseFloat(`${subTotal}`).toFixed(2),
-            total: +parseFloat(`${total}`).toFixed(2),
         }
 
     } catch (error) {
@@ -61,8 +66,12 @@ export const cashStatus = async () => {
             message: 'Error no controlado - contacte con el administrador',
             gastos: [],
             cashRegister: null,
-            total: 0,
-            subTotal:0
+            subTotal: 0
         }
     }
+}
+
+function isValidDate(date: any): boolean {
+    const parsedDate = new Date(date);
+    return parsedDate instanceof Date && !isNaN(parsedDate.getTime());
 }

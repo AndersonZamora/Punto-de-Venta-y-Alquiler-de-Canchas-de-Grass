@@ -1,9 +1,8 @@
-import { IoArrowBack } from "react-icons/io5";
-
-import { TitleAdmin } from "@/components";
-import { getProductBySlug } from "@/actions";
-import { ProductUpdateForm } from "./ui/ProductUpdateForm";
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
+import { IoArrowBack } from 'react-icons/io5';
+import { TitleAdmin } from '@/components';
+import { getProductBySlug } from '@/actions';
+import { ProductUpdateForm } from './ui/ProductUpdateForm';
 
 interface Props {
     params: {

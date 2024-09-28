@@ -57,16 +57,6 @@ export const getDated = () => {
     }
 }
 
-export const formatZonedDate = (date: Date): string => {
-    const timeZone = 'America/Lima';
-    const zonedDate = toZonedTime(date, timeZone);
-    return format(zonedDate, 'EEEE dd MMM yyyy HH:mm:ss', { timeZone: 'America/Lima', locale: es });
-};
-
-export const addOneHour = (date: Date, hour: number): Date => {
-    return add(date, { hours: hour });
-};
-
 export const addOneDay = (date: Date, day: number): Date => {
     return add(date, { days: day });
 }
@@ -132,6 +122,19 @@ export const separateDateTime = (dateEntry: string) => {
     const [hours, minutes] = hora.split(':').map(Number);
 
     const localDate = new Date(year, month - 1, day, hours, minutes, 0);
+
+    const adjustedDate = new Date(localDate.getTime() - (localDate.getTimezoneOffset() * 60000));
+
+    return adjustedDate.toISOString()
+}
+
+export const separateDateTimeEnd = (dateEntry: string) => {
+
+    const [fecha, hora] = dateEntry.split("T");
+
+    const [year, month, day] = fecha.split('-').map(Number);
+
+    const localDate = new Date(year, month - 1, day, 23, 59, 59, 999);
 
     const adjustedDate = new Date(localDate.getTime() - (localDate.getTimezoneOffset() * 60000));
 
@@ -210,16 +213,41 @@ export const normalizeDate = (value: Date) => {
     return `${capitalize(dayName)} ${day} de ${month} del ${year} - ${convertTo12HourFormat(hora)}`;
 }
 
+export const normalizeDateRe = (value: Date) => {
+
+    const valueU = convertDate(value);
+
+    const [fecha, hora] = valueU.split(",");
+    
+    return `${fecha}`
+}
+
+export const normalizeReport = (value: Date) => {
+
+    const valueU = convertDate(value);
+
+    const [fecha, hora] = valueU.split(",");
+    const [dayv, monthv, yearv,] = fecha.split('/').map(Number);
+    const localDate = new Date(yearv, monthv - 1, dayv);
+
+    const dayName = format(localDate, 'EEEE', { locale: es });
+    const month = format(localDate, 'MMMM', { locale: es });
+    const day = format(localDate, 'd', { locale: es });
+    const year = format(localDate, 'yyyy', { locale: es });
+
+    return `${capitalize(dayName)} ${day} de ${month} del ${year}`;
+}
+
 export const getStartDateOfWeek = (weekString: string) => {
     const [year, week] = weekString.split('-W').map(Number);
 
-    // Crear un objeto Date para el 1 de enero del año seleccionado
+    //* Crear un objeto Date para el 1 de enero del año seleccionado
     const firstDayOfYear = new Date(year, 0, 1);
 
-    // Obtener el número de días que se deben sumar para llegar al lunes de la semana seleccionada
+    //* Obtener el número de días que se deben sumar para llegar al lunes de la semana seleccionada
     const daysOffset = (week - 1) * 7 + (1 - firstDayOfYear.getDay());
 
-    // Ajustar la fecha para que sea el lunes de esa semana
+    //* Ajustar la fecha para que sea el lunes de esa semana
     const startDateOfWeek = new Date(firstDayOfYear);
     startDateOfWeek.setDate(firstDayOfYear.getDate() + daysOffset);
 

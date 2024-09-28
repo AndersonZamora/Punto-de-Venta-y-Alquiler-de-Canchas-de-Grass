@@ -1,9 +1,9 @@
 'use server';
 
-import { IBodegaProduct } from "@/interfaces";
-import prisma from "@/lib/prisma";
-import { currentDateServer, dateServerSale } from "@/utils";
-import { revalidatePath } from "next/cache";
+import { revalidatePath } from 'next/cache';
+import { IBodegaProduct } from '@/interfaces';
+import prisma from '@/lib/prisma';
+import { currentDateServer, dateServerSale } from '@/utils';
 
 interface Props {
     products: IBodegaProduct[];
@@ -26,7 +26,6 @@ export const registerSale = async ({ products }: Props) => {
         });
 
         if (!cashRegister) {
-
             return {
                 status: false,
                 message: 'No hay una caja abierta actualmente'
@@ -51,7 +50,6 @@ export const registerSale = async ({ products }: Props) => {
 
         const total = products.reduce((subTotal, product) => (product.quantity * product.salePrice) + subTotal, 0)
 
-        // const startOfDay = dateServerPurchase(dateEntry)
         const startSaveSale = dateServerSale();
 
         await prisma.sale.create({
@@ -88,8 +86,11 @@ export const registerSale = async ({ products }: Props) => {
             where: { id: cashRegister.id },
             data: {
                 totalSales: {
-                    increment: total, // Asumiendo que `sale.total` es el total de la venta
+                    increment: total, //* Asumiendo que `sale.total` es el total de la venta
                 },
+                closingBalance: {
+                    increment: total
+                }
             },
         });
 

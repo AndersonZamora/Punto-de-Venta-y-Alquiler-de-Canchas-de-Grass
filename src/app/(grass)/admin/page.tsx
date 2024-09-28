@@ -1,10 +1,10 @@
 import { ItemsCard } from '@/components';
-import { IoBarChart, IoBaseballSharp, IoCartOutline, IoLogoDropbox, IoPersonOutline, IoPricetagsOutline } from 'react-icons/io5';
+import { IoAnalyticsOutline, IoBarChart, IoCartOutline, IoLogoDropbox, IoPersonOutline, IoPricetagsOutline } from 'react-icons/io5';
 
-export default async function AdminPage() {
+export default function AdminPage() {
 
   return (
-    <div className='fade-in'>
+    <div className='px-0 md:px-10 fade-in'>
       <h3 className="text-3xl font-medium text-gray-700">Dashboard</h3>
       <div className="mt-4">
         <div className="flex flex-wrap -mx-6">
@@ -24,14 +24,7 @@ export default async function AdminPage() {
           />
           <ItemsCard
             classNa='mb-6 sm:mt-0'
-            title={'Grass'}
-            quantity={''}
-            icon={<IoBaseballSharp className='w-8 h-8 text-white' />}
-            rederi='/admin/grass'
-          />
-          <ItemsCard
-            classNa='mb-6 sm:mt-0'
-            title={'Ventas'}
+            title={'Cajas'}
             quantity={''}
             icon={<IoPricetagsOutline className='w-8 h-8 text-white' />}
             rederi='/admin/ventas'
@@ -49,6 +42,13 @@ export default async function AdminPage() {
             quantity={''}
             icon={<IoPersonOutline className='w-8 h-8 text-white' />}
             rederi='/admin/usuarios'
+          />
+          <ItemsCard
+            classNa='mb-6 sm:mt-0'
+            title={'Utilidades'}
+            quantity={''}
+            icon={<IoAnalyticsOutline className='w-8 h-8 text-white' />}
+            rederi='/admin/utilities'
           />
         </div>
       </div>

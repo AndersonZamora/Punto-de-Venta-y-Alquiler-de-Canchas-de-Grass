@@ -1,10 +1,10 @@
 'use client';
 
+import { useState } from 'react';
+import Link from 'next/link';
+import { IoKeyOutline, IoPencilSharp } from 'react-icons/io5';
 import { IUser } from '@/interfaces'
 import { capitalize } from '@/utils';
-import Link from 'next/link';
-import React, { useState } from 'react'
-import { IoKeyOutline, IoPencilSharp } from 'react-icons/io5';
 import { ModalPass } from './ModalPass';
 
 interface Props {

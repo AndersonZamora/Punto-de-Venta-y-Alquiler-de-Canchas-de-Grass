@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { IoEye } from 'react-icons/io5';
-import { convertDate, currencyFormat, normalizeDate } from '@/utils';
+import { currencyFormat, normalizeDate } from '@/utils';
 import { ModalDetail } from './ModalDetail';
 
 interface Product {
@@ -68,7 +68,7 @@ export const DetailSale = ({ sales }: Props) => {
                                 </td>
                                 <td className="p-4 py-5">
                                     <p className="text-center text-md text-black">
-                                        {normalizeDate(product.saleTime)} 
+                                        {normalizeDate(product.saleTime)}
                                     </p>
                                 </td>
                                 <td className="p-4 py-5">

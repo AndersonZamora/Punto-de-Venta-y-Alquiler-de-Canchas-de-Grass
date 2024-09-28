@@ -18,7 +18,6 @@ export const PaginationModal = ({ totalPages, onPageChange, currentPage }: Props
     };
 
     return (
-
         <div className="flex text-center justify-center mt-10 mb-5">
             <nav aria-label="Page navigation example">
                 <ul className="flex list-style-none">

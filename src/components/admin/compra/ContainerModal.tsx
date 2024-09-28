@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react'
-import { IoAdd } from 'react-icons/io5'
-import { TablaModal } from './TablaModal'
+import { useState } from 'react';
+import { IoAdd } from 'react-icons/io5';
+import { TablaModal } from './TablaModal';
 
 export const ContainerModal =  () => {
 

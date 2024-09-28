@@ -35,9 +35,8 @@ export const UserUpdateForm = ({ user }: Props) => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSutmit)}>
+    <form onSubmit={handleSubmit(onSutmit)} noValidate>
       <div className="grid grid-cols-1 gap-2 sm:gap-5 sm:grid-cols-2">
-
         <div className="flex flex-col mb-2">
           <span>Nombre completo</span>
           <input

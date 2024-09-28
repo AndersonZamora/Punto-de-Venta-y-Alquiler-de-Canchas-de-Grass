@@ -1,12 +1,12 @@
+import Link from 'next/link';
 import { cashStatus } from '@/actions';
-import { capitalize, convertDate, currencyFormat, currentDate, normalizeDate } from '@/utils';
+import { capitalize, currencyFormat, currentDate, normalizeDate } from '@/utils';
 import { ActionsCaja } from './ui/ActionsCaja';
 import { ActionsOpenCaja } from './ui/ActionsOpenCaja';
-import Link from 'next/link';
 
 export default async function CajaPage() {
 
-  const { cashRegister, total, gastos, subTotal } = await cashStatus();
+  const { cashRegister, gastos, subTotal } = await cashStatus({ search: '' });
 
   return (
     <div className='fade-in'>
@@ -34,7 +34,6 @@ export default async function CajaPage() {
                 <div className="p-3 grid items-center grid-cols-1 md:grid-cols-2 gap-1 mx-auto mt-1">
                   <div className="py-4  rounded-md shadow-lg">
                     <h3 className="text-center font-bold text-xl">Ingresos</h3>
-
                     <Link
                       className="px-2 md:px-4 flex justify-between mt-2"
                       href={"/punto/ventas"}
@@ -77,7 +76,7 @@ export default async function CajaPage() {
                     </div>
                     <div className="border-t-2 border-t-gray-400 mt-3 py-2 px-2 md:px-4 flex items-center justify-between">
                       <span className="font-semibold text-xl">Total</span>
-                      <span className="font-bold text-xl">{currencyFormat(total || 0)}</span>
+                      <span className="font-bold text-xl">{currencyFormat(cashRegister.closingBalance)}</span>
                     </div>
                   </div>
                 </div>
@@ -102,7 +101,7 @@ export default async function CajaPage() {
                 </div>
               </div>
             )
-            : (<ActionsCaja isOpen={!cashRegister} />)
+            : (<ActionsCaja isOpen={!!cashRegister} />)
         }
       </div>
     </div>

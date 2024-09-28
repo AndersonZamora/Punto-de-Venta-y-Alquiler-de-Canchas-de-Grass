@@ -1,12 +1,12 @@
 'use client';
 
-import { updatePassUser } from '@/actions';
-import { errorAlert, loadingAlert, successAlert } from '@/utils';
-import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoCloseCircleOutline } from 'react-icons/io5';
+import { updatePassUser } from '@/actions';
+import { errorAlert, loadingAlert, successAlert } from '@/utils';
+import clsx from 'clsx';
 
 interface InputPass {
     password: string;
@@ -64,7 +64,7 @@ export const ModalPass = ({ openModalPass, onCloseModalPass, id }: Props) => {
                         </button>
                     </header>
                     <div className="p-2 text-center">
-                        <form onSubmit={handleSubmit(onSubmitPass)}>
+                        <form onSubmit={handleSubmit(onSubmitPass)} noValidate>
                             <div className="flex flex-col mb-2">
                                 <span>Contraseña</span>
                                 <input

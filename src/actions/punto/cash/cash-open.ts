@@ -1,8 +1,8 @@
 'use server';
 
-import { auth } from "@/auth.config";
-import prisma from "@/lib/prisma";
-import { dateServerSale } from "@/utils";
+import { auth } from '@/auth.config';
+import prisma from '@/lib/prisma';
+import { dateServerSale } from '@/utils';
 
 interface Props {
     total: number;
@@ -11,7 +11,7 @@ interface Props {
 export const cashOpen = async ({ total }: Props) => {
 
     try {
-        
+
         const startOfDay = dateServerSale();
 
         const session = await auth();
@@ -20,8 +20,8 @@ export const cashOpen = async ({ total }: Props) => {
             data: {
                 openedBy: session?.user.username || 'user',
                 openTime: startOfDay,
-                openingBalance: +total,
-                closingBalance:0,
+                openingBalance: +parseFloat(`${total}`).toFixed(),
+                closingBalance: +parseFloat(`${total}`).toFixed(),
                 status: true,
                 totalSales: 0,
                 totalExpenses: 0,
@@ -35,7 +35,6 @@ export const cashOpen = async ({ total }: Props) => {
         }
 
     } catch (error) {
-        console.log(error)
         return {
             status: false,
             message: 'Error no controlado - contacte con el administrador',

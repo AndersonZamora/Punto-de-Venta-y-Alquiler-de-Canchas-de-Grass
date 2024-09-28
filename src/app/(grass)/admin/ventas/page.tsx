@@ -1,10 +1,18 @@
-import { cashStatus } from "@/actions";
-import { capitalize, currencyFormat, currentDate, normalizeDate } from "@/utils";
-import Link from "next/link";
+import Link from 'next/link';
+import { cashStatus } from '@/actions';
+import { capitalize, currencyFormat, normalizeDate } from '@/utils';
+import { SelectDate } from './ui/SelectDate';
 
-export default async function VentasPage() {
+interface Props {
+    searchParams: {
+        search?: string
+    }
+}
 
-    const { cashRegister, total, gastos, subTotal } = await cashStatus();
+export default async function VentasPage({ searchParams }: Props) {
+
+    const search = searchParams.search || '';
+    const { cashRegister, gastos, subTotal } = await cashStatus({ search });
 
     return (
         <div className="px-2 md:px-5 fade-in">
@@ -13,7 +21,7 @@ export default async function VentasPage() {
                     ? (
                         <>
                             <div className=" relative overflow-hidden text-slate-700 rounded-none bg-clip-border">
-                                <h3 className="text-lg font-semibold text-slate-800">Reporte de caja del dia: {currentDate()} </h3>
+                                <h3 className="text-lg font-semibold text-slate-800">Reporte de caja del día: {normalizeDate(cashRegister.openTime)} </h3>
                                 <h3 className="text-lg font-semibold text-slate-800">
                                     Estado de la caja: {cashRegister.status ? 'Abierta' : 'Cerrada'}
                                 </h3>
@@ -32,7 +40,8 @@ export default async function VentasPage() {
                                     )
                                 }
                             </div>
-                            <div className="bg-white rounded-xl">
+                            <div className="bg-white rounded-xl mt-4">
+                                <SelectDate search={search} title={"Seleccionar otra caja"} />
                                 <div className="p-3 grid items-center grid-cols-1 md:grid-cols-2 gap-1 mt-5">
                                     <div className="py-4 rounded-md shadow-lg">
                                         <div className="border-t-2 border-t-gray-400 flex flex-col items-center">
@@ -50,10 +59,9 @@ export default async function VentasPage() {
                                 <div className="p-3 grid items-center grid-cols-1 md:grid-cols-2 gap-1 mx-auto mt-1">
                                     <div className="py-4  rounded-md shadow-lg">
                                         <h3 className="text-center font-bold text-xl">Ingresos</h3>
-
                                         <Link
                                             className="px-2 md:px-4 flex justify-between mt-2"
-                                            href={"/admin/bodega"}
+                                            href={`/admin/bodega/${cashRegister.id}`}
                                         >
                                             <span className="font-semibold text-xl">Total de ventas</span>
                                             <span className="flex gap-2 font-bold text-xl">
@@ -62,7 +70,7 @@ export default async function VentasPage() {
                                         </Link>
                                         <Link
                                             className="px-2 md:px-4 flex justify-between"
-                                            href={"/admin/grass"}
+                                            href={`/admin/grass/${cashRegister.id}`}
                                         >
                                             <span className="font-semibold text-xl">Total de alquiler</span>
                                             <span className="flex gap-2 font-bold text-xl">
@@ -92,8 +100,8 @@ export default async function VentasPage() {
                                             <span className="font-bold text-xl">{currencyFormat(cashRegister.totalExpenses)}</span>
                                         </div>
                                         <div className="border-t-2 border-t-gray-400 mt-3 py-2 px-2 md:px-4 flex items-center justify-between">
-                                            <span className="font-semibold text-xl">Total</span>
-                                            <span className="font-bold text-xl">{currencyFormat(total || 0)}</span>
+                                            <span className="font-semibold text-xl">Saldo de cierre</span>
+                                            <span className="font-bold text-xl">{currencyFormat(cashRegister.closingBalance)}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -119,12 +127,9 @@ export default async function VentasPage() {
                             </div>
                         </>
                     ) : (
-                        <>
-                            <h3>Actualmente no hay caja abierta</h3>
-                        </>
+                        <SelectDate search={search} title={"No encontramos ninguna caja, intente con otra fecha"} />
                     )
             }
-
         </div>
     );
 }

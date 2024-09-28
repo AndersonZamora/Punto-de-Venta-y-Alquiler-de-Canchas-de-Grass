@@ -16,7 +16,7 @@ interface Props {
 
 export const ModalPrice = ({ openModalPrice, productView, onCloseModalPrice }: Props) => {
 
-  const { handleSubmit, register, reset, watch, setValue, getValues, formState: { errors } } = useForm<IProduct>();
+  const { handleSubmit, register, reset, formState: { errors } } = useForm<IProduct>();
   const addProductTocart = useSaleStore(state => state.addProductTocart);
   const [updateQuantity, setUpdateQuantity] = useState(1);
 
@@ -39,30 +39,6 @@ export const ModalPrice = ({ openModalPrice, productView, onCloseModalPrice }: P
     setUpdateQuantity(1);
   }, [productView]);
 
-  useEffect(() => {
-    const subscription = watch((value, { name, type }) => {
-      if (name === 'profitMargin' || name === 'purchasePrice') {
-        const price = getValues('purchasePrice');
-        const frank = getValues('profitMargin');
-        let purchase = price * frank;
-        setValue('salePrice', parseFloat(purchase.toFixed(2)), { shouldValidate: false })
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [watch, setValue])
-
-  useEffect(() => {
-    const subscription = watch((value, { name, type }) => {
-      if (name === 'salePrice') {
-        const sale = getValues('salePrice');
-        const price = getValues('purchasePrice');
-        let profit = sale - price;
-        setValue('profit', parseFloat(profit.toFixed(2)), { shouldValidate: false })
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [watch, setValue])
- 
   return (
     <div className={
       clsx(
@@ -70,7 +46,6 @@ export const ModalPrice = ({ openModalPrice, productView, onCloseModalPrice }: P
         { 'invisible': !openModalPrice }
       )
     }>
-
       <div className="max-h-full w-full max-w-xl overflow-y-auto sm:rounded-2xl bg-white">
         <div className="w-full">
           <header className="flex items-center justify-between p-2 border-b-2 border-gray-400">
@@ -83,7 +58,7 @@ export const ModalPrice = ({ openModalPrice, productView, onCloseModalPrice }: P
             </button>
           </header>
           <div className="p-2 text-center">
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit)} noValidate>
               <div className="flex flex-col mb-4">
                 <span>Descripción</span>
                 <input
@@ -100,78 +75,22 @@ export const ModalPrice = ({ openModalPrice, productView, onCloseModalPrice }: P
                 {errors.description && (<span className="text-red-500 font-mono">{errors.description?.message}</span>)}
 
               </div>
-              <div className="grid grid-cols-1 gap-2 sm:gap-5 sm:grid-cols-2">
-                <div className="flex flex-col mb-2">
-                  <span>Precio de compra</span>
-                  <input
-                    type="text"
-                    autoFocus
-                    className="p-2 border rounded-md bg-gray-200"
-                    {...register('purchasePrice', {
-                      required: { value: true, message: 'Precio requerido' },
-                      pattern: { value: /^\d+(\.\d{1,2})?$/, message: 'Solo números' },
-                      min: { value: 0.1, message: 'No puede ser cero' },
-                      minLength: { value: 1, message: 'Ingrese al menos un número' },
-                      maxLength: { value: 8, message: 'Número no valido' }
-                    })}
-                  />
-                  {errors.purchasePrice && (<span className="text-red-500 font-mono">{errors.purchasePrice?.message}</span>)}
-
-                </div>
-                <div className="flex flex-col mb-2">
-                  <span>Margen Utilidad</span>
-                  <input
-                    type="text"
-                    className="p-2 border rounded-md bg-gray-200"
-                    {...register('profitMargin', {
-                      required: { value: true, message: 'El margen de utilidad es requerido' },
-                      pattern: { value: /^\d+(\.\d{1,6})?$/, message: 'Solo números' },
-                      min: { value: 0.1, message: 'No puede ser cero' },
-                      minLength: { value: 1, message: 'Ingrese al menos un número' },
-                      maxLength: { value: 8, message: 'Número no valido' }
-                    })}
-                  />
-                  {errors.profitMargin && (<span className="text-red-500 font-mono">{errors.profitMargin?.message}</span>)}
-
-                </div>
-
-                <div className="flex flex-col mb-2">
-                  <span>Precio de venta</span>
-                  <input
-                    type="text"
-                    className="p-2 border rounded-md bg-gray-200"
-                    {...register('salePrice', {
-                      required: { value: true, message: 'El precio de venta es requerido' },
-                      pattern: { value: /^\d+(\.\d{1,2})?$/, message: 'Solo números' },
-                      min: { value: 0.1, message: 'No puede ser cero' },
-                      minLength: { value: 1, message: 'Ingrese al menos un número' },
-                      maxLength: { value: 8, message: 'Número no valido' }
-                    })}
-                  />
-                  {errors.salePrice && (<span className="text-red-500 font-mono">{errors.salePrice?.message}</span>)}
-
-                </div>
-
-                <div className="flex flex-col mb-2">
-                  <span>Utilidad</span>
-                  <input
-                    type="text"
-                    disabled
-                    className="p-2 border rounded-md bg-gray-200"
-                    {...register('profit', {
-                      required: { value: true, message: 'La utilidad es requerida' },
-                      pattern: { value: /^\d+(\.\d{1,2})?$/, message: 'Solo números' },
-                      min: { value: 0.1, message: 'No puede ser cero' },
-                      minLength: { value: 1, message: 'Ingrese al menos un número' },
-                      maxLength: { value: 8, message: 'Número no valido' }
-                    })}
-                  />
-                  {errors.profit && (<span className="text-red-500 font-mono">{errors.profit?.message}</span>)}
-
-                </div>
+              <div className="flex flex-col mb-2">
+                <span>Precio de compra</span>
+                <input
+                  type="text"
+                  disabled
+                  className="p-2 border rounded-md bg-gray-200"
+                  {...register('purchasePrice', {
+                    required: { value: true, message: 'Precio requerido' },
+                    pattern: { value: /^\d+(\.\d{1,2})?$/, message: 'Solo números' },
+                    min: { value: 0.1, message: 'No puede ser cero' },
+                    minLength: { value: 1, message: 'Ingrese al menos un número' },
+                    maxLength: { value: 8, message: 'Número no valido' }
+                  })}
+                />
+                {errors.purchasePrice && (<span className="text-red-500 font-mono">{errors.purchasePrice?.message}</span>)}
               </div>
-
-
               <div className="flex flex-col items-center mb-2">
                 <span>Cantidad - Unidades</span>
                 <Quantity

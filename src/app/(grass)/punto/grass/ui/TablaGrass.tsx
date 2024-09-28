@@ -5,6 +5,8 @@ import { IoSearch } from 'react-icons/io5';
 import { PaginationModal } from '@/components';
 import { IRental } from '@/interfaces/IRental';
 import { capitalize, currencyFormat, separateDateTimeView } from '@/utils';
+import { ViewDetail } from './ViewDetail';
+import { AddComentarios } from './AddComentarios';
 
 interface Props {
     rentals: IRental[],
@@ -23,8 +25,8 @@ export const TablaGrass = ({ rentals, totalPages }: Props) => {
     }
 
     const filteredProducts = rentals.filter((rental) =>
-        rental.documentDni.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        rental.phone.toLowerCase().includes(searchTerm.toLowerCase()) 
+        rental.documentDni.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        rental.phone.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -89,6 +91,12 @@ export const TablaGrass = ({ rentals, totalPages }: Props) => {
                                     Comentarios
                                 </p>
                             </th>
+                            <th
+                                className="p-4 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100">
+                                <p
+                                    className="flex items-center justify-between gap-2 font-sans text-sm  font-normal leading-none ttext-black">
+                                </p>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -125,10 +133,11 @@ export const TablaGrass = ({ rentals, totalPages }: Props) => {
                                             {currencyFormat(rental.total)}
                                         </p>
                                     </td>
-                                    <td className="p-4 py-5">
-                                        <p className="text-center text-md text-black">
-                                            {capitalize(rental.description || '-')}
-                                        </p>
+                                    <td className="p-4 py-5 text-center">
+                                        <ViewDetail description={rental.description || '-'} />
+                                    </td>
+                                    <td className='className="p-4 py-5"'>
+                                        <AddComentarios data={{ id: rental.id, description: rental.description || '-' }} />
                                     </td>
                                 </tr>
                             ))

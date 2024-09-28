@@ -40,10 +40,8 @@ export const createUser = async (user: IUser) => {
         }
 
     } catch (error) {
-        console.log(error)
         return {
             status: false,
-            product: null,
             message: 'Error no controlado - contacte al administrador',
         }
     }

@@ -49,6 +49,9 @@ export const cashWithdrawMoney = async ({ description, amount }: Props) => {
                 totalExpenses: {
                     increment: +amount,
                 },
+                closingBalance: {
+                    decrement: +amount
+                }
             },
         });
 
@@ -61,7 +64,6 @@ export const cashWithdrawMoney = async ({ description, amount }: Props) => {
         }
 
     } catch (error) {
-        console.log(error)
         return {
             status: false,
             message: 'Error no controlado - contacte con el administrador',

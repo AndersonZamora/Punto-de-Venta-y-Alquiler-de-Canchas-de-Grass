@@ -82,7 +82,7 @@ export const registerRentalPunto = async ({ rental }: Props) => {
     }
 
     const descrip = rental.description || '-';
- 
+
     await prisma.rental.createMany({
       data: {
         customerName: rental.customerName.toLocaleLowerCase().trim(),
@@ -101,8 +101,11 @@ export const registerRentalPunto = async ({ rental }: Props) => {
       where: { id: cashRegister.id },
       data: {
         totalRentals: {
-          increment: +rental.total, // Asumiendo que `sale.total` es el total de la venta
+          increment: +rental.total, //* Asumiendo que `sale.total` es el total de la venta
         },
+        closingBalance: {
+          increment: +rental.total
+        }
       },
     });
 

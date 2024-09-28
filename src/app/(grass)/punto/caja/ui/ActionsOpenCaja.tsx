@@ -41,7 +41,7 @@ export const ActionsOpenCaja = ({ id, status }: Props) => {
                 }
 
                 successAlert('Caja cerrada');
-                router.replace('/')
+                router.replace('/punto')
             }
         });
     }

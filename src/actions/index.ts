@@ -25,8 +25,11 @@ export { getProductsPunto } from './punto/venta/get-products-punto';
 export { registerSale } from './punto/venta/register-sale';
 export { getSalesPunto } from './punto/venta/get-sales-punto';
 
+export { getStockProducts } from './punto/productos/get-stock-productos';
+
 export { registerRentalPunto } from './punto/grass/register-rental-punto';
 export { getRentalPunto } from './punto/grass/get-rental-punto';
+export { updateRentalPunto } from './punto/grass/update-renta-punto';
 
 export { cashStatus } from './punto/cash/cash-status';
 export { cashOpen } from './punto/cash/cash-open'
@@ -35,5 +38,7 @@ export { cashWithdrawMoney } from './punto/cash/cash-withdraw-money';
 export { openCashAgain } from './punto/cash/open-cash-again';
 
 export { getWeeklyReportReport } from './admin/reports/get-weeklyReport-report';
-
-
+export { getCashBalancesForMonth } from './admin/reports/get-cash-balances-for-month';
+export { getRangesBalances } from './admin/reports/get-ranges-balances';
+export { getBalanceAll } from './admin/reports/get-balance-all';
+export { registerUtility } from './admin/reports/register-utility';

@@ -3,7 +3,6 @@ export * from './ISaleProduct';
 export * from './IBodegaProduct';
 export * from './IPurchase';
 export * from './IProductPun';
-export * from './ICashStatus';
 export * from './IRental';
 export * from './IUser';
 export * from './IUserd';

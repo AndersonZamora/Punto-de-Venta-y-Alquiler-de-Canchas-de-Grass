@@ -1,8 +1,9 @@
 'use server';
 
-import { auth } from "@/auth.config";
-import prisma from "@/lib/prisma";
-import { dateServerSale } from "@/utils";
+import { revalidatePath } from 'next/cache';
+import { auth } from '@/auth.config';
+import prisma from '@/lib/prisma';
+import { dateServerSale } from '@/utils';
 
 interface Props {
     id: string;
@@ -41,6 +42,8 @@ export const cashClose = async ({ id }: Props) => {
                 closingBalance: +parseFloat(`${closingBalance}`).toFixed(2)
             },
         });
+ 
+        revalidatePath('/punto/caja');
 
         return {
             status: true,

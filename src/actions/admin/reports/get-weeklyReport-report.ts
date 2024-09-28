@@ -1,6 +1,6 @@
 'use server';
 
-import prisma from "@/lib/prisma";
+import prisma from '@/lib/prisma';
 
 export const getWeeklyReportReport = async (selectWeekly: Date) => {
     try {
@@ -25,7 +25,6 @@ export const getWeeklyReportReport = async (selectWeekly: Date) => {
                 totalSales: true,
                 totalRentals: true,
                 totalExpenses: true,
-                openingBalance: true,
                 closingBalance: true,
             },
             where: {
@@ -39,35 +38,52 @@ export const getWeeklyReportReport = async (selectWeekly: Date) => {
         const result = await prisma.cashRegister.findMany({
             where: {
                 openTime: {
-                    gte: startOfWeek, // Solo los registros de la última semana
+                    gte: startOfWeek, //* Solo los registros de la última semana
                 },
             },
             select: {
-                openTime: true, // Para obtener la fecha de apertura de caja
-                totalSales: true, // Total de ventas
-                totalRentals: true, // Total de alquileres
-                totalExpenses: true, // Total de gastos
+                openTime: true, //* Para obtener la fecha de apertura de caja
+                openingBalance: true, //* Con cuanto se abrio
+                closingBalance: true, //* Con cuanto se cerro
             },
         });
 
         return {
-            result: result,
-            totalSales: report._sum.totalSales || 0,
-            totalRentals: report._sum.totalRentals || 0,
-            totalExpenses: report._sum.totalExpenses || 0,
-            openingBalance: report._sum.openingBalance || 0,
-            closingBalance: report._sum.closingBalance || 0,
+            status: true,
+            message: 'ok',
+            result: result || [],
+            report: {
+                totalSales: report._sum.totalSales || 0,
+                totalRentals: report._sum.totalRentals || 0,
+                totalExpenses: report._sum.totalExpenses || 0,
+                closingBalance: report._sum.closingBalance || 0,
+            }
         };
 
     } catch (error) {
-        console.log(error);
+        if (error instanceof Error) {
+            return {
+                status: false,
+                message: error.message,
+                result: [],
+                report: {
+                    totalSales: 0,
+                    totalRentals: 0,
+                    totalExpenses: 0,
+                    closingBalance: 0,
+                },
+            }
+        }
         return {
+            status: false,
             result: [],
-            totalSales: 0,
-            totalRentals: 0,
-            totalExpenses: 0,
-            openingBalance: 0,
-            closingBalance: 0,
+            report: {
+                totalSales: 0,
+                totalRentals: 0,
+                totalExpenses: 0,
+                closingBalance: 0,
+            },
+            message: 'Error no controlado - contacte al administrador',
         }
     }
 }

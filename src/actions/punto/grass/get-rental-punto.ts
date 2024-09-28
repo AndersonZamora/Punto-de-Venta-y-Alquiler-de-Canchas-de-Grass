@@ -1,5 +1,7 @@
-import prisma from "@/lib/prisma";
-import { currentDateServer } from "@/utils";
+'use server';
+
+import prisma from '@/lib/prisma';
+import { currentDateServer } from '@/utils';
 
 export const getRentalPunto = async () => {
     try {
@@ -45,7 +47,8 @@ export const getRentalPunto = async () => {
             status: false,
             message: 'Error no controlado - contacte con el administrador',
             total: 0,
-            rentals: []
+            rentals: [],
+            totalPages: 0,
         }
     }
 }

@@ -18,7 +18,7 @@ export const BodegaModalPrice = ({ openModalPrice, productView, onCloseModalPric
 
   const { handleSubmit, register, reset, formState: { errors } } = useForm<IBodegaProduct>();
   const addProductTocartB = useBodegaStore(state => state.addProductTocartB);
-  const [updateQuantity, setUpdateQuantity] = useState(1);
+  const [updateQuantity, setUpdateQuantity] = useState(0);
 
   const onSubmit = (data: IBodegaProduct) => {
     addProductTocartB({
@@ -57,7 +57,7 @@ export const BodegaModalPrice = ({ openModalPrice, productView, onCloseModalPric
             </button>
           </header>
           <div className="p-2 text-center">
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit)} noValidate>
               <div className="flex flex-col mb-4">
                 <span>Descripción</span>
                 <input
@@ -71,7 +71,7 @@ export const BodegaModalPrice = ({ openModalPrice, productView, onCloseModalPric
               </div>
 
               <div className="flex flex-col mb-2">
-                <span>Precio de compra</span>
+                <span>Precio de venta</span>
                 <input
                   type="text"
                   disabled
@@ -91,6 +91,7 @@ export const BodegaModalPrice = ({ openModalPrice, productView, onCloseModalPric
               </div>
               <div className='flex justify-center mt-5 mb-5'>
                 <button
+                  disabled={!(productView.stock > 0)}
                   className="w-[200px] md:w-[300px] text-center rounded bg-green-600 py-2.5 text-md font-semibold text-white"
                   type="submit"
                 >
