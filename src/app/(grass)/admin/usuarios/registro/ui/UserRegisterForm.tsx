@@ -29,13 +29,13 @@ export const UserRegisterForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSutmit)} noValidate>
+    <form onSubmit={handleSubmit(onSutmit)} noValidate autoComplete='off'>
       <div className="grid grid-cols-1 gap-2 sm:gap-5 sm:grid-cols-2">
         <div className="flex flex-col mb-2">
           <span>Nombre completo</span>
           <input
             type="text"
-            autoFocus
+            autoComplete='off'
             className="p-2 border rounded-md bg-gray-200"
             {...register('name', {
               required: { value: true, message: 'Nombre requerido' },
@@ -50,7 +50,7 @@ export const UserRegisterForm = () => {
           <span>Usuario</span>
           <input
             type="text"
-            autoFocus
+            autoComplete='off'
             className="p-2 border rounded-md bg-gray-200"
             {...register('username', {
               required: { value: true, message: 'Usuario requerido' },
@@ -65,7 +65,7 @@ export const UserRegisterForm = () => {
           <span>Contraseña</span>
           <input
             type="text"
-            autoFocus
+            autoComplete='off'
             className="p-2 border rounded-md bg-gray-200"
             {...register('password', {
               required: { value: true, message: 'Contraseña requerida' },

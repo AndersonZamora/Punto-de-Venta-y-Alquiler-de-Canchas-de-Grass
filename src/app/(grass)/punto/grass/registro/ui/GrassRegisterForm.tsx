@@ -37,13 +37,13 @@ export const GrassRegisterForm = () => {
     }
 
     return (
-        <form className='fade-in' onSubmit={handleSubmit(onSutmit)} noValidate>
+        <form className='fade-in' onSubmit={handleSubmit(onSutmit)} noValidate autoComplete='off'>
             <div className="grid grid-cols-1 gap-2 sm:gap-5 sm:grid-cols-2">
                 <div className="flex flex-col mb-2">
                     <span>Nombre</span>
                     <input
                         type="text"
-                        autoFocus
+                        autoComplete='off'
                         className="p-2 border rounded-md bg-gray-200"
                         {...register('customerName', {
                             required: { value: true, message: 'El nombre es requerido' },
@@ -59,6 +59,7 @@ export const GrassRegisterForm = () => {
                     <span>DNI</span>
                     <input
                         type="text"
+                        autoComplete='off'
                         className="p-2 border rounded-md bg-gray-200"
                         {...register('documentDni', {
                             required: { value: true, message: 'DNI requerido' },
@@ -75,6 +76,7 @@ export const GrassRegisterForm = () => {
                     <span>Celular</span>
                     <input
                         type="text"
+                        autoComplete='off'
                         className="p-2 border rounded-md bg-gray-200"
                         {...register('phone', {
                             required: { value: true, message: 'Celular requerido' },
@@ -91,6 +93,7 @@ export const GrassRegisterForm = () => {
                     <span>Total</span>
                     <input
                         type="text"
+                        autoComplete='off'
                         className="p-2 border rounded-md bg-gray-200"
                         {...register('total', {
                             required: { value: true, message: 'Precio requerido' },
@@ -107,6 +110,7 @@ export const GrassRegisterForm = () => {
                 <div className="flex flex-col mb-2">
                     <span>Ingreso</span>
                     <input
+                        autoComplete='off'
                         min={dateServerSale().slice(0, 16)} //* Bloquea los días anteriores
                         max={dateServerSale().slice(0, 10) + 'T23:59'} //* Bloquea los días posteriores
                         type="datetime-local"
@@ -121,6 +125,7 @@ export const GrassRegisterForm = () => {
                 <div className="flex flex-col mb-2">
                     <span>Salida</span>
                     <input
+                        autoComplete='off'
                         min={dateServerSale().slice(0, 16)} //* Bloquea los días anteriores
                         max={dateServerSale().slice(0, 10) + 'T23:59'} //* Bloquea los días posteriores
                         type="datetime-local"
@@ -137,6 +142,7 @@ export const GrassRegisterForm = () => {
                 <span>Comentarios</span>
                 <input
                     type="text"
+                    autoComplete='off'
                     className="p-2 border rounded-md bg-gray-200 h-16"
                     {...register('description', {
                         required: { value: true, message: 'Ingrese detalle' },

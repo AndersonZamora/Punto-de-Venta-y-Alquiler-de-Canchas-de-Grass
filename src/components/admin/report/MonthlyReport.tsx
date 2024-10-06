@@ -73,8 +73,8 @@ export const MonthlyReport = () => {
         </div>
       </div>
       <div className='p-3 grid items-center grid-cols-1 md:grid-cols-2 gap-2 mt-5'>
-        <div className=' rounded-md shadow-lg'>
-          {
+        <div className='rounded-md shadow-lg'>
+          { 
             (cashBalance) &&
             (<LineChartComponent data={cashBalance} title={'Evolución de Saldos de Caja Durante el Mes'} />)
           }
@@ -107,6 +107,11 @@ export const MonthlyReport = () => {
                       </tr>
                     </tbody>
                   </table>
+                  <div className='hidden md:block'>
+                    <h5 className="text-xl text-gray-600 text-center">&nbsp;</h5>
+                    <h5 className="text-xl text-gray-600 text-center">&nbsp;</h5>
+                    <h5 className="text-xl text-gray-600 text-center">&nbsp;</h5>
+                  </div>
                 </div>
               </div>
             )

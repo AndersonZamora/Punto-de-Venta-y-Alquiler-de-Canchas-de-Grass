@@ -18,7 +18,7 @@ interface State {
     removeProductB: (product: IBodegaProduct) => void;
     clearSale: () => void;
 }
-
+ 
 export const useBodegaStore = create<State>()(
     persist(
         (set, get) => ({

@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
 import bcryptjs from 'bcryptjs';
+import { auth } from '@/auth.config';
 
 interface InputPass {
     password: string;
@@ -14,6 +15,15 @@ export const updatePassUser = async (data: InputPass) => {
     try {
 
         const { id, password } = data;
+
+        const session = await auth();
+
+        if (session?.user.role !== 'admin') {
+            return {
+                status: false,
+                message: 'privilegios insuficientes',
+            }
+        }
 
         const userDb = await prisma.user.findFirst({
             where: {

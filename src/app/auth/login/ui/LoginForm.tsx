@@ -17,11 +17,12 @@ export const LoginForm = () => {
     }, [state])
 
     return (
-        <form action={dispath} className="flex flex-col" noValidate>
+        <form action={dispath} className="flex flex-col" noValidate autoComplete='off'>
             <label htmlFor="email">Usuario</label>
             <input
                 className="px-5 py-2 border bg-gray-200 rounded mb-5"
                 type="text"
+                autoComplete='off'
                 name='email'
             />
 
@@ -29,6 +30,7 @@ export const LoginForm = () => {
             <input
                 className="px-5 py-2 border bg-gray-200 rounded mb-5"
                 type="password"
+                autoComplete='off'
                 name='password'
             />
 

@@ -14,7 +14,7 @@ export const cashClose = async ({ id }: Props) => {
     try {
 
         const cashRegister = await prisma.cashRegister.findFirst({
-            where: { id },
+            where: { id: id, status: true },
         });
 
         const session = await auth();
@@ -33,16 +33,18 @@ export const cashClose = async ({ id }: Props) => {
             cashRegister.totalRentals -
             cashRegister.totalExpenses;
 
-        await prisma.cashRegister.update({
-            where: { id: id },
-            data: {
-                status: false,
-                closedBy: session?.user.username,
-                closeTime: startOfDay,
-                closingBalance: +parseFloat(`${closingBalance}`).toFixed(2)
-            },
-        });
- 
+        await prisma.$transaction(async (tx) => {
+            await tx.cashRegister.update({
+                where: { id: id },
+                data: {
+                    status: false,
+                    closedBy: session?.user.username,
+                    closeTime: startOfDay,
+                    closingBalance: +parseFloat(`${closingBalance}`).toFixed(2)
+                },
+            });
+        })
+
         revalidatePath('/punto/caja');
 
         return {

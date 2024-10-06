@@ -53,11 +53,11 @@ export const registerRentalPunto = async ({ rental }: Props) => {
       throw new Error('Debe haber un intervalo mínimo de 15 minutos entre el tiempo de ingreso y el tiempo de salida');
     }
 
-    //* Verificar si hay conflictos en la base de datos
+    //! Verificar si hay conflictos en la base de datos
     const overlappingRentals = await prisma.rental.findMany({
       where: {
         OR: [
-          //* Caso 1: Reservas que empiezan antes de la nueva reserva pero terminan durante o después
+          //! Caso 1: Reservas que empiezan antes de la nueva reserva pero terminan durante o después
           {
             startTime: {
               lte: startTime,
@@ -66,7 +66,7 @@ export const registerRentalPunto = async ({ rental }: Props) => {
               gte: startTime,
             },
           },
-          //* Caso 2: Reservas que empiezan durante el nuevo rango
+          //! Caso 2: Reservas que empiezan durante el nuevo rango
           {
             startTime: {
               lte: endTime,
@@ -83,31 +83,34 @@ export const registerRentalPunto = async ({ rental }: Props) => {
 
     const descrip = rental.description || '-';
 
-    await prisma.rental.createMany({
-      data: {
-        customerName: rental.customerName.toLocaleLowerCase().trim(),
-        documentDni: rental.documentDni,
-        phone: rental.phone,
-        startTime: startTime,
-        endTime: endTime,
-        total: +rental.total,
-        description: descrip.toLocaleLowerCase().trim(),
-        registeredBy: 'user 1',
-        cashRegisterId: cashRegister.id
-      }
-    })
+    await prisma.$transaction(async (tx) => {
 
-    await prisma.cashRegister.update({
-      where: { id: cashRegister.id },
-      data: {
-        totalRentals: {
-          increment: +rental.total, //* Asumiendo que `sale.total` es el total de la venta
-        },
-        closingBalance: {
-          increment: +rental.total
+      await tx.rental.createMany({
+        data: {
+          customerName: rental.customerName.toLocaleLowerCase().trim(),
+          documentDni: rental.documentDni,
+          phone: rental.phone,
+          startTime: startTime,
+          endTime: endTime,
+          total: +rental.total,
+          description: descrip.toLocaleLowerCase().trim(),
+          registeredBy: 'user 1',
+          cashRegisterId: cashRegister.id
         }
-      },
-    });
+      })
+
+      await tx.cashRegister.update({
+        where: { id: cashRegister.id },
+        data: {
+          totalRentals: {
+            increment: +rental.total, //! Asumiendo que `sale.total` es el total de la venta
+          },
+          closingBalance: {
+            increment: +rental.total
+          }
+        },
+      });
+    })
 
     revalidatePath('/punto/grass');
     revalidatePath('/admin/ventas');

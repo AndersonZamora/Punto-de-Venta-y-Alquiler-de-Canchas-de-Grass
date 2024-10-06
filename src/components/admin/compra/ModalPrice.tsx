@@ -58,11 +58,12 @@ export const ModalPrice = ({ openModalPrice, productView, onCloseModalPrice }: P
             </button>
           </header>
           <div className="p-2 text-center">
-            <form onSubmit={handleSubmit(onSubmit)} noValidate>
+            <form onSubmit={handleSubmit(onSubmit)} noValidate autoComplete='off'>
               <div className="flex flex-col mb-4">
                 <span>Descripción</span>
                 <input
                   type="text"
+                  autoComplete='off'
                   disabled
                   className="p-2 border rounded-md bg-gray-200"
                   {...register('description', {
@@ -79,6 +80,7 @@ export const ModalPrice = ({ openModalPrice, productView, onCloseModalPrice }: P
                 <span>Precio de compra</span>
                 <input
                   type="text"
+                  autoComplete='off'
                   disabled
                   className="p-2 border rounded-md bg-gray-200"
                   {...register('purchasePrice', {

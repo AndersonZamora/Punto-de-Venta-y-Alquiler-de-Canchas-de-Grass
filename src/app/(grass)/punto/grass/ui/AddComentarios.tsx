@@ -71,11 +71,12 @@ export const AddComentarios = ({ data }: Props) => {
                             </button>
                         </header>
                         <div className="p-2 text-center">
-                            <form onSubmit={handleSubmit(onSubmitD)} noValidate>
+                            <form onSubmit={handleSubmit(onSubmitD)} noValidate autoComplete='off'>
                                 <div className="flex flex-col mb-2 mt-2">
                                     <span>Comentarios</span>
                                     <input
                                         type="text"
+                                        autoComplete='off'
                                         className="p-2 border rounded-md bg-gray-200 h-20"
                                         {...register('description', {
                                             required: { value: true, message: 'Ingrese detalle' },

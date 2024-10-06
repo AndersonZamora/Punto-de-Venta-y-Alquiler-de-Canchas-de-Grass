@@ -84,7 +84,7 @@ export const RangesReport = () => {
 
   return (
     <>
-      <div className='w-full flex flex-col md:flex-row justify-center gap-2 items-center'>
+      <div className='w-full flex flex-col md:flex-row justify-center gap-2 items-center mt-3 mb-5'>
         <div className='w-full md:w-2/6'>
           <span>Inicio</span>
           <input
@@ -113,14 +113,14 @@ export const RangesReport = () => {
           <>
             <div className='w-full flex flex-col-reverse md:flex-row justify-center gap-2 items-center'>
 
-              <div className='w-full md:w-3/6'>
+              <div className='rounded-md shadow-lg w-full md:w-3/6'>
                 {
                   (cashBalance) &&
                   (<LineChartComponent data={cashBalance} title={'Evolución por rangos de fecha'} />)
                 }
               </div>
               <div className='w-full md:w-3/6'>
-                <div className='mt-2 rounded-md shadow-lg'>
+                <div className='rounded-md shadow-lg'>
                   <div className="md:col-span-2 lg:col-span-1" >
                     <div className="h-full py-8 px-6 space-y-6 rounded-xl border border-gray-200 bg-white">
                       <div>
@@ -145,6 +145,11 @@ export const RangesReport = () => {
                           </tr>
                         </tbody>
                       </table>
+                      <div className='hidden md:block'>
+                    <h5 className="text-xl text-gray-600 text-center">&nbsp;</h5>
+                    <h5 className="text-xl text-gray-600 text-center">&nbsp;</h5>
+                    <h5 className="text-xl text-gray-600 text-center">&nbsp;</h5>
+                  </div>
                     </div>
                   </div>
                 </div>

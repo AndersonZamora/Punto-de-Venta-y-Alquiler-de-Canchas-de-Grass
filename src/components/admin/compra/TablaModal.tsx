@@ -111,7 +111,7 @@ export const TablaModal = ({ openModal, onCloseModal }: Props) => {
                     <div className="p-2 text-center">
                         <div className="flex flex-col md:flex-row items-center justify-between mb-5">
                             <div className="w-full max-w-sm min-w-[200px] relative">
-                                <form onSubmit={(value) => handleOnSubmit(value.nativeEvent)} noValidate>
+                                <form onSubmit={(value) => handleOnSubmit(value.nativeEvent)} noValidate  autoComplete='off'>
                                     <input
                                         disabled={loading}
                                         name='search'

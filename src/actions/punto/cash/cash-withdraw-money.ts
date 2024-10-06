@@ -34,26 +34,29 @@ export const cashWithdrawMoney = async ({ description, amount }: Props) => {
 
         const startOfDay = dateServerSale();
 
-        await prisma.expense.createMany({
-            data: {
-                description: description.toLocaleLowerCase().trim(),
-                amount: +amount,
-                expenseTime: startOfDay,
-                cashRegisterId: cashRegister.id
-            }
-        })
+        await prisma.$transaction(async (tx) => {
 
-        await prisma.cashRegister.update({
-            where: { id: cashRegister.id },
-            data: {
-                totalExpenses: {
-                    increment: +amount,
-                },
-                closingBalance: {
-                    decrement: +amount
+            await tx.expense.createMany({
+                data: {
+                    description: description.toLocaleLowerCase().trim(),
+                    amount: +amount,
+                    expenseTime: startOfDay,
+                    cashRegisterId: cashRegister.id
                 }
-            },
-        });
+            })
+
+            await tx.cashRegister.update({
+                where: { id: cashRegister.id },
+                data: {
+                    totalExpenses: {
+                        increment: +amount,
+                    },
+                    closingBalance: {
+                        decrement: +amount
+                    }
+                },
+            });
+        })
 
         revalidatePath('/punto/caja');
         revalidatePath('/admin/ventas');

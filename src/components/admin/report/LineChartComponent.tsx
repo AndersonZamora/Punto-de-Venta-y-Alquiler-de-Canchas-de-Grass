@@ -21,11 +21,11 @@ ChartJS.register(
 );
 
 interface CashBalanceData {
-    labels: string[]; //* Fechas de los días
+    labels: string[];
     datasets: {
         label: string;
-        data: number[]; //* Valores del balance (apertura o cierre)
-        borderColor: string; //* Color de la línea
+        data: number[];
+        borderColor: string;
         fill: boolean;
     }[];
 }
@@ -37,7 +37,7 @@ interface LineChartProps {
 
 export const LineChartComponent: React.FC<LineChartProps> = ({ data, title }) => {
     return (
-        <div className="w-full h-96">
+        <div className="w-full h-auto md:h-96">
             <Line
                 data={data}
                 options={{

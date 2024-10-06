@@ -25,7 +25,7 @@ export const ProductRegisterForm = () => {
 
   const onSutmit = async (data: IProduct) => {
 
-    loadingAlert('Registrando compra...');
+    loadingAlert('Registrando producto...');
 
     const { status, messsage } = await createProduct({ ...data });
 
@@ -63,13 +63,13 @@ export const ProductRegisterForm = () => {
   }, [watch, setValue])
 
   return (
-    <form className='fade-in' onSubmit={handleSubmit(onSutmit)} noValidate>
+    <form className='fade-in' onSubmit={handleSubmit(onSutmit)} noValidate autoComplete='off'>
       <div className="grid grid-cols-1 gap-2 sm:gap-5 md:grid-cols-2">
         <div className="flex flex-col mb-2">
           <span>Descripción</span>
           <input
             type="text"
-            autoFocus
+            autoComplete='off'
             className="p-2 border rounded-md bg-gray-200"
             {...register('description', {
               required: { value: true, message: 'La descripción es requerida' },
@@ -84,6 +84,7 @@ export const ProductRegisterForm = () => {
           <span>Precio de compra</span>
           <input
             type="text"
+            autoComplete='off'
             className="p-2 border rounded-md bg-gray-200"
             {...register('purchasePrice', {
               required: { value: true, message: 'Precio requerido' },
@@ -99,6 +100,7 @@ export const ProductRegisterForm = () => {
           <span>Margen Utilidad</span>
           <input
             type="text"
+            autoComplete='off'
             className="p-2 border rounded-md bg-gray-200"
             {...register('profitMargin', {
               required: { value: true, message: 'El margen de utilidad es requerido' },
@@ -114,6 +116,7 @@ export const ProductRegisterForm = () => {
           <span>Precio de venta</span>
           <input
             type="text"
+            autoComplete='off'
             className="p-2 border rounded-md bg-gray-200"
             {...register('salePrice', {
               required: { value: true, message: 'El precio de venta es requerido' },
@@ -129,6 +132,7 @@ export const ProductRegisterForm = () => {
           <span>Utilidad</span>
           <input
             type="text"
+            autoComplete='off'
             disabled
             className="p-2 border rounded-md bg-gray-200"
             {...register('profit', {

@@ -46,11 +46,11 @@ export const BoletaForm = ({ sales }: Props) => {
     }
 
     return (
-        <form onSubmit={handleSubmit(onSutmit)} noValidate>
+        <form onSubmit={handleSubmit(onSutmit)} noValidate autoComplete='off'>
             <div className="flex flex-col mb-2 ">
                 <input
                     type="text"
-                    autoFocus
+                    autoComplete='off'
                     placeholder="Nro Doc Fisico"
                     className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
                     {...register('ticketNumber', {
@@ -66,6 +66,7 @@ export const BoletaForm = ({ sales }: Props) => {
 
                 <input
                     type="date"
+                    autoComplete='off'
                     placeholder="Fecha de ingreso"
                     className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
                     {...register('dateEntry', {

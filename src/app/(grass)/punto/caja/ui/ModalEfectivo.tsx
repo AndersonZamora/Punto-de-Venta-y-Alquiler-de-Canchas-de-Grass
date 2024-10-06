@@ -59,12 +59,12 @@ export const ModalEfectivo = ({ openModalPrice, onCloseModalEfec }: Props) => {
                         </button>
                     </header>
                     <div className="p-2 text-center">
-                        <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                        <form onSubmit={handleSubmit(onSubmit)} noValidate autoComplete='off'>
                             <div className="flex flex-col mb-4">
                                 <span>Descripción</span>
                                 <input
                                     type="text"
-                                    autoFocus
+                                    autoComplete='off'
                                     className="p-2 border rounded-md bg-gray-200"
                                     {...register('description', {
                                         required: { value: true, message: 'La descripción es requerida' },
@@ -80,6 +80,7 @@ export const ModalEfectivo = ({ openModalPrice, onCloseModalEfec }: Props) => {
                                 <span>Monto</span>
                                 <input
                                     type="text"
+                                    autoComplete='off'
                                     className="p-2 border rounded-md bg-gray-200"
                                     {...register('amount', {
                                         required: { value: true, message: 'Precio requerido' },

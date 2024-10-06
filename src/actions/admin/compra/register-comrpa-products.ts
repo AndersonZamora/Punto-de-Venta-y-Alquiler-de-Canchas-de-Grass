@@ -38,35 +38,43 @@ export const registerComrpaProducts = async ({
 
         const startOfDay = dateServerPurchase(dateEntry)
 
-        await prisma.purchase.create({
-            data: {
-                purchaseDate:  startOfDay,
-                documentNumber: ticketNumber,
-                total,
-                products: {
-                    create: sales.map((product) => ({
-                        productId: product.id,
-                        quantity: product.quantity,
-                        costPrice: product.purchasePrice,
-                        total: +parseFloat(`${product.quantity * product.purchasePrice}`).toFixed()
-                    })),
+        await prisma.$transaction(async (tx) => {
+
+            await tx.purchase.create({
+                data: {
+                    purchaseDate: startOfDay,
+                    documentNumber: ticketNumber,
+                    total,
+                    products: {
+                        create: sales.map((product) => ({
+                            productId: product.id,
+                            quantity: product.quantity,
+                            costPrice: product.purchasePrice,
+                            total: +parseFloat(`${product.quantity * product.purchasePrice}`).toFixed()
+                        })),
+                    }
                 }
-            }
+            })
+
+            const updateStockProduct = sales.map(async product => {
+                return tx.product.update({
+                    where: { id: product.id },
+                    data: {
+                        state: true,
+                        stock: {
+                            increment: product.quantity
+                        },
+                    },
+                });
+            })
+
+            await Promise.all(updateStockProduct);
+
         })
 
-        for (const product of sales) {
-            await prisma.product.update({
-                where: { id: product.id },
-                data: {
-                    state:true,
-                    stock: {
-                        increment: product.quantity
-                    },
-                },
-            });
-        }
-
         revalidatePath('/admin/compras');
+        revalidatePath('/admin/productos');
+        revalidatePath('/punto/productos');
         revalidatePath('/punto/bodega');
 
         return {

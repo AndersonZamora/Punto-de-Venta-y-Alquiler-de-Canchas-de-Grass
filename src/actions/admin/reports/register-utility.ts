@@ -28,11 +28,11 @@ export const registerUtility = async (data: IUtility) => {
             throw new Error('Debe haber un intervalo mínimo de 2 dias entre el tiempo de Inicio y el tiempo Fin');
         }
 
-        //* Verificar si hay conflictos en la base de datos
+        //! Verificar si hay conflictos en la base de datos
         const overlappingRentals = await prisma.utility.findMany({
             where: {
                 OR: [
-                    //* Caso 1: Reservas que empiezan antes de la nueva reserva pero terminan durante o después
+                    //! Caso 1: Reservas que empiezan antes de la nueva reserva pero terminan durante o después
                     {
                         startTime: {
                             lte: startTime,
@@ -41,7 +41,7 @@ export const registerUtility = async (data: IUtility) => {
                             gte: startTime,
                         },
                     },
-                    //* Caso 2: Reservas que empiezan durante el nuevo rango
+                    //! Caso 2: Reservas que empiezan durante el nuevo rango
                     {
                         startTime: {
                             lte: endTime,
@@ -63,6 +63,8 @@ export const registerUtility = async (data: IUtility) => {
                 endTime
             }
         });
+
+          //! eliminar todas las ventas y compras menores al rango calulado
 
         revalidatePath('/admin/utilities');
 

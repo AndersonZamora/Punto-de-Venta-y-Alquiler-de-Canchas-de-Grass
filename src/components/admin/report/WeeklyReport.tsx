@@ -39,7 +39,7 @@ export const WeeklyReport = () => {
 
   const handleReportWeekly = async () => {
     loadingAlert('Buscando....');
-    
+
     const { report, result, status, message } = await getWeeklyReportReport(dateSelect as Date);
 
     if (!status) {
@@ -113,6 +113,11 @@ export const WeeklyReport = () => {
                       </tr>
                     </tbody>
                   </table>
+                  <div className='hidden md:block'>
+                    <h5 className="text-xl text-gray-600 text-center">&nbsp;</h5>
+                    <h5 className="text-xl text-gray-600 text-center">&nbsp;</h5>
+                    <h5 className="text-xl text-gray-600 text-center">&nbsp;</h5>
+                  </div>
                 </div>
               </div>
             )

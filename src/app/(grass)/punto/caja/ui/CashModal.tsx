@@ -32,7 +32,7 @@ export const CashModal = ({ openModalPrice, onCloseModal }: Props) => {
       errorAlert(message);
       return;
     }
-    
+
     successAlert('Caja abierta')
     onCloseModal();
     router.refresh()
@@ -58,13 +58,13 @@ export const CashModal = ({ openModalPrice, onCloseModal }: Props) => {
             </button>
           </header>
           <div className="p-2 text-center">
-            <form onSubmit={handleSubmit(onSubmit)} noValidate>
+            <form onSubmit={handleSubmit(onSubmit)} noValidate autoComplete='off'>
 
               <div className="flex flex-col mb-2">
                 <span>Saldo de apertura</span>
                 <input
                   type="text"
-                  autoFocus
+                  autoComplete='off'
                   className="p-2 border rounded-md bg-gray-200"
                   {...register('total', {
                     required: { value: true, message: 'Saldo requerido' },

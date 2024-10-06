@@ -28,8 +28,12 @@ export const TopMenu = () => {
                 }
 
                 <div className="relative mx-4">
-                    <h1>Gass sintetico</h1>
+                    <Link
+                        href={'/'}>
+                        Gass sintetico
+                    </Link>
                 </div>
+
             </div>
 
             <div className="flex items-center">

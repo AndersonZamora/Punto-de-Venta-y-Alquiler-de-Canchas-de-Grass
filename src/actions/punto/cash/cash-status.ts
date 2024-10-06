@@ -64,8 +64,3 @@ export const cashStatus = async ({ search }: Props) => {
         }
     }
 }
-
-function isValidDate(date: any): boolean {
-    const parsedDate = new Date(date);
-    return parsedDate instanceof Date && !isNaN(parsedDate.getTime());
-}

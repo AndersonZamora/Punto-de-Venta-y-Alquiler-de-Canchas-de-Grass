@@ -30,7 +30,7 @@ interface BarChartComponentProps {
 
 export const WeekBarChartComponent: React.FC<BarChartComponentProps> = ({ data, options }) => {
     return (
-        <div className="w-full h-96">
+        <div className="w-full h-auto md:h-96">
             <Bar data={data} options={options} />
         </div>
     )

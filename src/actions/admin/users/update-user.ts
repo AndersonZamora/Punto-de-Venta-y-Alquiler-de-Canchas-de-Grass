@@ -3,12 +3,22 @@
 import { revalidatePath } from 'next/cache';
 import { IUser } from '@/interfaces';
 import prisma from '@/lib/prisma'
+import { auth } from '@/auth.config';
 
 export const updateUser = async (user: IUser) => {
 
     try {
 
         const { id, name, role, status } = user;
+
+        const session = await auth();
+
+        if (session?.user.role !== 'admin') {
+            return {
+                status: false,
+                message: 'privilegios insuficientes',
+            }
+        }
 
         const userDb = await prisma.user.findFirst({
             where: {

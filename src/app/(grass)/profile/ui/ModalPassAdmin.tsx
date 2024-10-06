@@ -1,12 +1,12 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoCloseCircleOutline } from 'react-icons/io5';
-import { updatePassUser } from '@/actions';
+import { logout, updatePassUser } from '@/actions';
 import { errorAlert, loadingAlert, successAlert } from '@/utils';
 import clsx from 'clsx';
+import { useBodegaStore, useSaleStore, useUserStore } from '@/store';
 
 interface InputPass {
     password: string;
@@ -18,11 +18,13 @@ interface Props {
     onCloseModalPass: () => void;
 }
 
-export const ModalPass = ({ openModalPass, onCloseModalPass, id }: Props) => {
-
-    const router = useRouter();
+export const ModalPassAdmin = ({ openModalPass, onCloseModalPass, id }: Props) => {
 
     const { handleSubmit, register, reset, formState: { errors } } = useForm<InputPass>();
+
+    const clearCart = useSaleStore(state => state.clearCart);
+    const clearSale = useBodegaStore(state => state.clearSale);
+    const clearUser = useUserStore(state => state.clearUser);
 
     const onSubmitPass = async (data: InputPass) => {
 
@@ -38,7 +40,11 @@ export const ModalPass = ({ openModalPass, onCloseModalPass, id }: Props) => {
         onCloseModalPass();
         successAlert('Contraseña actaulizada');
 
-        router.replace('/admin/usuarios');
+        clearCart();
+        clearSale();
+        clearUser();
+
+        await logout();
     }
 
     useEffect(() => {
@@ -52,7 +58,7 @@ export const ModalPass = ({ openModalPass, onCloseModalPass, id }: Props) => {
                 { 'invisible': !openModalPass }
             )
         }>
-            <div className="max-h-full w-full max-w-xl overflow-y-auto sm:rounded-2xl bg-white">
+            <div className="fade-in max-h-full w-full max-w-xl overflow-y-auto sm:rounded-2xl bg-white">
                 <div className="w-full">
                     <header className="flex items-center justify-between p-2 border-b-2 border-gray-400">
                         <h2 className="font-semibold" id="exampleHeader">Actualizar contraseña</h2>
