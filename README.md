@@ -3,7 +3,7 @@
 
 ## Correr en dev
 
-1. Clonar el repositorio
+1. Clonar el repositorio compartido
 2. Crear una copia del ```.env template ``` y renombrarlo a ```env```
 3. Instalar dependencias ```yarn```
 4. Levantar la base de datos ```docker compose up -d```
