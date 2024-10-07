@@ -6,10 +6,10 @@ import prisma from '@/lib/prisma';
 import { currentDateServer, dateServerSale } from '@/utils';
 
 interface Props {
-    products: IBodegaProduct[];
+    productIds: IBodegaProduct[];
 }
 
-export const registerSale = async ({ products }: Props) => {
+export const registerSale = async ({ productIds }: Props) => {
 
     try {
 
@@ -32,67 +32,101 @@ export const registerSale = async ({ products }: Props) => {
             }
         }
 
-        await prisma.$transaction(async (prisma) => {
-            for (const product of products) {
-                const existingProduct = await prisma.product.findUnique({
-                    where: { id: product.id },
-                });
-
-                if (!existingProduct) {
-                    throw new Error(`El producto: ${product.description} no existe.`);
-                }
-
-                if (!(existingProduct.stock >= product.quantity)) {
-                    throw new Error(`Stock insuficiente para el producto: ${existingProduct.description}. Solo quedan ( ${existingProduct.stock} ) unidades disponibles. Recarge el navegador`);
-                }
-            }
+        const products = await prisma.product.findMany({
+            where: {
+                id: {
+                    in: productIds.map((p) => p.id),
+                },
+            },
         });
-
-        const total = products.reduce((subTotal, product) => (product.quantity * product.salePrice) + subTotal, 0)
 
         const startSaveSale = dateServerSale();
 
-        await prisma.sale.create({
-            data: {
-                total: total,
-                paymentMethod: 'efectivo',
-                saleTime: startSaveSale,
-                cashRegisterId: cashRegister?.id || '1',
-                products: {
-                    create: products.map((product) => ({
-                        productId: product.id,
-                        quantity: product.quantity,
-                        total: 1,
-                    })),
-                },
-            },
-        });
+        const { subTotal } = productIds.reduce(
+            (totals, item) => {
+                const productQuantity = item.quantity;
+                const product = products.find((product) => product.id === item.id);
 
-        await prisma.$transaction(async (prisma) => {
-            for (const product of products) {
-                await prisma.product.update({
+                if (!product) throw new Error(`${item.description} no existe - 500`);
+
+                const subTotal = +product.salePrice * productQuantity;
+
+                totals.subTotal += subTotal;
+
+                return totals;
+            },
+            { subTotal: 0 }
+        );
+
+        await prisma.$transaction(async (tx) => {
+
+            //! 1. Actualizar el stock de los productos
+            const updatedProductsPromises = products.map((product) => {
+                //!  Acumular los valores
+                const productQuantity = productIds
+                    .filter((p) => p.id === product.id)
+                    .reduce((acc, item) => item.quantity + acc, 0);
+
+                if (productQuantity === 0) {
+                    throw new Error(`${product.id} no tiene cantidad definida`);
+                }
+
+                return tx.product.update({
                     where: { id: product.id },
                     data: {
-                        state: true,
                         stock: {
-                            decrement: product.quantity
+                            decrement: productQuantity,
                         },
                     },
                 });
-            }
-        })
+            });
 
-        await prisma.cashRegister.update({
-            where: { id: cashRegister.id },
-            data: {
-                totalSales: {
-                    increment: total, //* Asumiendo que `sale.total` es el total de la venta
-                },
-                closingBalance: {
-                    increment: total
+            const updatedProducts = await Promise.all(updatedProductsPromises);
+
+            //! 2. verificar stock
+            updatedProducts.forEach((product) => {
+                if (product.stock < 0) {
+                    throw new Error(`${product.description} no tiene inventario suficiente`);
                 }
-            },
+            });
+
+            //! 3. crear venta
+            const createSale = await tx.sale.create({
+                data: {
+                    total: +parseFloat(`${subTotal}`).toFixed(2),
+                    paymentMethod: 'efectivo',
+                    saleTime: startSaveSale,
+                    cashRegisterId: cashRegister?.id || '1',
+                    products: {
+                        create: productIds.map((product) => ({
+                            productId: product.id,
+                            quantity: product.quantity,
+                            total: +parseFloat(`${product.quantity * product.salePrice}`).toFixed(),
+                        })),
+                    },
+                },
+            });
+
+            //! 4. actualizar caja
+            const updateCash = await tx.cashRegister.update({
+                where: { id: cashRegister.id },
+                data: {
+                    totalSales: {
+                        increment: subTotal, //! Asumiendo que `sale.total` es el total de la venta
+                    },
+                    closingBalance: {
+                        increment: subTotal
+                    }
+                },
+            });
+
+            return {
+                updatedProducts: updatedProducts,
+                createSale: createSale,
+                updateCash: updateCash
+            }
         });
+
 
         revalidatePath('/punto/bodega/make');
         revalidatePath('/admin/ventas');

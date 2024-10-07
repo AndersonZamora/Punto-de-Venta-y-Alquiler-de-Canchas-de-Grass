@@ -23,7 +23,7 @@ export const ResumenBodega = () => {
 
         loadingAlert('Registrando venta...');
 
-        const { status, message } = await registerSale({ products: saleB })
+        const { status, message } = await registerSale({ productIds: saleB })
 
         if (!status) {
             errorAlert(message);
@@ -32,7 +32,7 @@ export const ResumenBodega = () => {
         
         clearSale();
         successAlert('Venta registra');
-        router.replace('/punto/bodega')
+        router.refresh()
     }
 
     return (

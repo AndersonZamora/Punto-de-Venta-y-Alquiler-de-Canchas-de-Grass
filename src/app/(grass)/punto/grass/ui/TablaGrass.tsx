@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { IoSearch } from 'react-icons/io5';
+import { IoPencilSharp, IoSearch } from 'react-icons/io5';
 import { PaginationModal } from '@/components';
 import { IRental } from '@/interfaces/IRental';
 import { capitalize, currencyFormat, separateDateTimeView } from '@/utils';
@@ -13,12 +13,19 @@ interface Props {
     totalPages: number;
 }
 
+interface IComet {
+    id: string;
+    description: string;
+}
+
 const ITEMS_PER_PAGE = 10;
 
 export const TablaGrass = ({ rentals, totalPages }: Props) => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
+    const [openDetail, setOpenDetail] = useState(false);
+    const [comments, setComments] = useState<IComet>();
 
     const onChangePage = (page: number) => {
         setCurrentPage(page);
@@ -31,6 +38,12 @@ export const TablaGrass = ({ rentals, totalPages }: Props) => {
 
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const selectedRental = filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+
+    const handleComment = (data: IComet) => {
+        setComments(data);
+        setOpenDetail(true);
+    }
 
     return (
         <>
@@ -137,7 +150,17 @@ export const TablaGrass = ({ rentals, totalPages }: Props) => {
                                         <ViewDetail description={rental.description || '-'} />
                                     </td>
                                     <td className='className="p-4 py-5"'>
-                                        <AddComentarios data={{ id: rental.id, description: rental.description || '-' }} />
+                                        <button
+                                            onClick={() => handleComment({
+                                                id: rental.id,
+                                                description: rental.description || '-'
+                                            })}
+                                            className="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-slate-900 transition-all hover:bg-slate-900/10 active:bg-slate-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                                        >
+                                            <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+                                                <IoPencilSharp className="w-6 h-6" />
+                                            </span>
+                                        </button>
                                     </td>
                                 </tr>
                             ))
@@ -146,6 +169,9 @@ export const TablaGrass = ({ rentals, totalPages }: Props) => {
                 </table>
                 <PaginationModal totalPages={totalPages} currentPage={currentPage} onPageChange={onChangePage} />
             </div>
+            {
+                (comments) && <AddComentarios openDetail={openDetail} data={comments} handleClose={() => setOpenDetail(false)} />
+            }
         </>
     )
 }
