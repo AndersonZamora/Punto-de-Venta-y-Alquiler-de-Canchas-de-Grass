@@ -150,7 +150,7 @@ export const GrassRegisterForm = () => {
                         maxLength: { value: 100, message: 'Maximo 100 letras' }
                     })}
                 />
-                && (<span className="text-red-500 font-mono">{errors.description?.message}</span>)
+                {errors.description && (<span className="text-red-500 font-mono">{errors.description?.message}</span>)}
             </div>
             <div className='flex justify-center mt-5 mb-5'>
                 <button
