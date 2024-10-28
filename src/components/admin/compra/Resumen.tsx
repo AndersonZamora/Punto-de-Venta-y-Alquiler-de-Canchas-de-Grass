@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSaleStore } from '@/store';
 import { currencyFormat } from '@/utils';
 import { BoletaForm } from './BoletaForm';
@@ -9,9 +9,13 @@ export const Resumen = () => {
 
     const [loading, setLoading] = useState(false);
 
-    const { subsTotal, tax, total } = useSaleStore(state => state.getSummaryInformation());
-
     const sales = useSaleStore(state => state.sale);
+
+    const { subsTotal, tax, total } = useMemo(() => {
+        const { getSummaryInformation } = useSaleStore.getState();
+        return getSummaryInformation();
+    }, [sales]);
+
 
     useEffect(() => {
         setLoading(true);
@@ -43,7 +47,6 @@ export const Resumen = () => {
                         </div>
                     )
                 }
- 
                 <div className="mt-1 p-4 flex flex-col text-gray-700 rounded-md shadow-lg">
                     <BoletaForm sales={sales} />
                 </div>

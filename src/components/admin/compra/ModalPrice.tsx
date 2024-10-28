@@ -68,7 +68,7 @@ export const ModalPrice = ({ openModalPrice, productView, onCloseModalPrice }: P
                   className="p-2 border rounded-md bg-gray-200"
                   {...register('description', {
                     required: { value: true, message: 'La descripción es requerida' },
-                    pattern: { value: /^[a-zA-Z0-9\s.#\-_°]+$/, message: 'No valido' },
+                    pattern: { value: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s.#\-_°]+$/, message: 'No valido' },
                     minLength: { value: 3, message: 'Minimo 3 letras' },
                     maxLength: { value: 100, message: 'Maximo 100 letras' }
                   })}
