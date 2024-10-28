@@ -5,6 +5,7 @@ import prisma from '@/lib/prisma';
 import { isBefore, isAfter, differenceInMinutes } from 'date-fns';
 import { IRental } from '@/interfaces';
 import { currentDateServer, startDateTime, separateDateTime, validateSameDay } from '@/utils';
+import { auth } from '@/auth.config';
 
 interface Props {
   rental: IRental;
@@ -49,8 +50,8 @@ export const registerRentalPunto = async ({ rental }: Props) => {
 
     const interval = differenceInMinutes(endTime, startTime);
 
-    if (interval < 15) {
-      throw new Error('Debe haber un intervalo mínimo de 15 minutos entre el tiempo de ingreso y el tiempo de salida');
+    if (interval < 10) {
+      throw new Error('Debe haber un intervalo mínimo de 10 minutos entre el tiempo de ingreso y el tiempo de salida');
     }
 
     //! Verificar si hay conflictos en la base de datos
@@ -83,9 +84,11 @@ export const registerRentalPunto = async ({ rental }: Props) => {
 
     const descrip = rental.description || '-';
 
+    const session = await auth();
+
     await prisma.$transaction(async (tx) => {
 
-      await tx.rental.createMany({
+      const registerRental = await tx.rental.createMany({
         data: {
           customerName: rental.customerName.toLocaleLowerCase().trim(),
           documentDni: rental.documentDni,
@@ -94,12 +97,12 @@ export const registerRentalPunto = async ({ rental }: Props) => {
           endTime: endTime,
           total: +rental.total,
           description: descrip.toLocaleLowerCase().trim(),
-          registeredBy: 'user 1',
+          registeredBy: session?.user.name || 'user',
           cashRegisterId: cashRegister.id
         }
       })
 
-      await tx.cashRegister.update({
+      const updateCash = await tx.cashRegister.update({
         where: { id: cashRegister.id },
         data: {
           totalRentals: {
@@ -110,6 +113,11 @@ export const registerRentalPunto = async ({ rental }: Props) => {
           }
         },
       });
+
+      return {
+        registerRental,
+        updateCash
+      }
     })
 
     revalidatePath('/punto/grass');

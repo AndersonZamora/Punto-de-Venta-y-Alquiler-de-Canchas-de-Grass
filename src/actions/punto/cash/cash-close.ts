@@ -28,11 +28,6 @@ export const cashClose = async ({ id }: Props) => {
             }
         }
 
-        const closingBalance = cashRegister.openingBalance +
-            cashRegister.totalSales +
-            cashRegister.totalRentals -
-            cashRegister.totalExpenses;
-
         await prisma.$transaction(async (tx) => {
             await tx.cashRegister.update({
                 where: { id: id },
@@ -40,7 +35,6 @@ export const cashClose = async ({ id }: Props) => {
                     status: false,
                     closedBy: session?.user.username,
                     closeTime: startOfDay,
-                    closingBalance: +parseFloat(`${closingBalance}`).toFixed(2)
                 },
             });
         })

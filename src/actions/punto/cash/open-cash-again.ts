@@ -29,7 +29,7 @@ export const openCashAgain = async ({ id }: Props) => {
             where: { id: id },
             data: {
                 status: true,
-                openedBy: session?.user.username
+                openedBy: session?.user.username || 'user up'
             },
         });
 

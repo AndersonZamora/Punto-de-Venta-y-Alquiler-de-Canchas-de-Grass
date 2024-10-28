@@ -40,7 +40,7 @@ export const registerComrpaProducts = async ({
 
         await prisma.$transaction(async (tx) => {
 
-            await tx.purchase.create({
+            const createPurch = await tx.purchase.create({
                 data: {
                     purchaseDate: startOfDay,
                     documentNumber: ticketNumber,
@@ -68,8 +68,12 @@ export const registerComrpaProducts = async ({
                 });
             })
 
-            await Promise.all(updateStockProduct);
+            const stockUpdate = await Promise.all(updateStockProduct);
 
+            return {
+                createPurch,
+                stockUpdate
+            }
         })
 
         revalidatePath('/admin/compras');
