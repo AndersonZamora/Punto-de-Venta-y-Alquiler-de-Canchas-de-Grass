@@ -73,12 +73,13 @@ export const useSaleStore = create<State>()(
                     return;
                 }
 
-                // se que el producto existe por talla ... incrementar
+                // se que el producto existe ... incrementar
                 const updatedCartProducts = sale.map((item) => {
                     if (item.id === product.id) {
                         return {
                             ...item,
                             quantity: item.quantity + product.quantity,
+                            extra: item.extra + product.extra,
                             purchasePrice: product.purchasePrice
                         }
                     }

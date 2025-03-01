@@ -20,8 +20,8 @@ export const cashOpen = async ({ total }: Props) => {
             data: {
                 openedBy: session?.user.username || 'user',
                 openTime: startOfDay,
-                openingBalance: +parseFloat(`${total}`).toFixed(),
-                closingBalance: +parseFloat(`${total}`).toFixed(),
+                openingBalance: +parseFloat(`${total}`).toFixed(2),
+                closingBalance: +parseFloat(`${total}`).toFixed(2),
                 status: true,
                 totalSales: 0,
                 totalExpenses: 0,

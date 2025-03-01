@@ -70,7 +70,7 @@ export const ModalEfectivo = ({ openModalPrice, onCloseModalEfec }: Props) => {
                                         required: { value: true, message: 'La descripción es requerida' },
                                         pattern: { value: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s.#\-_°]+$/, message: 'No valido' },
                                         minLength: { value: 3, message: 'Minimo 3 letras' },
-                                        maxLength: { value: 100, message: 'Maximo 100 letras' }
+                                        maxLength: { value: 200, message: 'Maximo 200 letras' }
                                     })}
                                 />
                                 {errors.description && (<span className="text-red-500 font-mono">{errors.description?.message}</span>)}

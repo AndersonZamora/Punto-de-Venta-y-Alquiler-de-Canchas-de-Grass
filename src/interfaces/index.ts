@@ -6,3 +6,6 @@ export * from './IProductPun';
 export * from './IRental';
 export * from './IUser';
 export * from './IUserd';
+export * from './IExpense';
+export * from './IReportTotal';
+export * from './IReportDetail';

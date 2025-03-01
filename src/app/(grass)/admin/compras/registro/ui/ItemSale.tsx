@@ -16,7 +16,7 @@ export const ItemSale = ({ saleProduct, removeItem, quantityItem }: Props) => {
             <div className="flex flex-col md:flex-row justify-between items-center mb-4 mt-2">
                 <div className="flex flex-row justify-center text-center w-fit md:w-2/5">
                     <span className="ml-1 font-semibold text-xl md:text-base">
-                        {currencyFormat(saleProduct.purchasePrice)} - {saleProduct.description}
+                        {currencyFormat(saleProduct.purchasePrice)} - {saleProduct.description} ({saleProduct.extra})
                     </span>
                 </div>
 

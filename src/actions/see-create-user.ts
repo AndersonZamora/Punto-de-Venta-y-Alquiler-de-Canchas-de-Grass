@@ -11,21 +11,11 @@ export const createUser = async () => {
 
         await prisma.user.create({
             data: {
-                username: 'admin01',
-                name: 'admin',
+                username: 'jimena',
+                name: 'Jimena',
                 status: true,
-                password: bcryptjs.hashSync('123456'),
+                password: bcryptjs.hashSync('#Jimea03#'),
                 role: 'admin'
-            }
-        })
-
-        await prisma.user.create({
-            data: {
-                username: 'user01',
-                name: 'user',
-                status: true,
-                password: bcryptjs.hashSync('123456'),
-                role: 'user'
             }
         })
 

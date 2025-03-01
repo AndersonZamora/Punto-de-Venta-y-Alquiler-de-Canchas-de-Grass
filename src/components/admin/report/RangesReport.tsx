@@ -1,37 +1,19 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getRangesBalances } from '@/actions';
-import { capitalize, closeAlert, currencyFormat, errorAlert, loadingAlert, normalizeReport, processCashBalancesForChart } from '@/utils';
+import { getRangesBalances, getTotals } from '@/actions';
+import { closeAlert, currencyFormat, errorAlert, exportToExcel, loadingAlert, processCashBalancesForChart, successAlert } from '@/utils';
 import { LineChartComponent } from './LineChartComponent';
-
-interface IReportRange {
-  id: string;
-  openedBy: string;
-  closedBy: string | null;
-  openTime: Date;
-  openingBalance: number;
-  closingBalance: number;
-  totalSales: number;
-  totalRentals: number;
-  totalExpenses: number;
-}
+import { IReportTotal } from '@/interfaces';
 
 interface CashBalanceData {
-  labels: string[]; //* Fechas de los días
+  labels: string[];
   datasets: {
     label: string;
-    data: number[]; //* Valores del balance (apertura o cierre)
-    borderColor: string; //* Color de la línea
+    data: number[];
+    borderColor: string;
     fill: boolean;
   }[];
-}
-
-interface IReporD {
-  balance: number;
-  sales: number;
-  rentals: number;
-  expenses: number;
 }
 
 export const RangesReport = () => {
@@ -40,9 +22,9 @@ export const RangesReport = () => {
   const [endTime, setDateFin] = useState('');
   const [startTimeS, setDateInitS] = useState('');
   const [endTimeS, setDateFinS] = useState('');
-  const [reports, setReports] = useState<IReportRange[]>([]);
-  const [summary, setSummary] = useState<IReporD>();
+  const [summary, setSummary] = useState<IReportTotal>();
   const [cashBalance, setCashBalance] = useState<CashBalanceData>();
+  const [loading, setLoading] = useState(true);
 
   const onChangeInit = (target: EventTarget & HTMLInputElement) => {
     if (target.value !== '') {
@@ -60,27 +42,74 @@ export const RangesReport = () => {
 
   const handleGetReport = async () => {
     loadingAlert('Buscando');
-    
-    const { status, message, cashRegisters, reportd } = await getRangesBalances({ startTime, endTime });
+
+    const { status, message, cashRegisters, report } = await getTotals({ startTime, endTime });
 
     if (!status) {
       errorAlert(message);
       return;
     }
 
+    setLoading(true);
     const process = processCashBalancesForChart(cashRegisters);
     setCashBalance(process)
-
-    setReports(cashRegisters);
-    setSummary({ ...reportd });
+    setSummary({ ...report });
     closeAlert();
   }
 
   useEffect(() => {
     if (startTime !== '' && endTime !== '') {
+      setSummary(undefined);
       handleGetReport();
     }
   }, [startTime, endTime])
+
+  const handleDetail = async () => {
+
+    try {
+      loadingAlert('Generando archivo...');
+      setLoading(false);
+
+      const {
+        status,
+        message,
+        newRentals,
+        newSales,
+        newExpenses,
+        newProducts,
+        newPurchaseProducts,
+        newDocuments,
+      } = await getRangesBalances({ startTime, endTime });
+
+      if (!status) {
+        errorAlert(message);
+        return;
+      }
+
+      try {
+        await exportToExcel({
+          detailData: {
+            newRentals,
+            newSales,
+            newExpenses,
+            newProducts,
+            newPurchaseProducts,
+            newDocuments,
+            summary: summary || { totalExpenses: 0, totalPurchas: 0, totalRentals: 0, totalSales: 0 }
+          },
+          title: "Reporte_por_rango_de_fechas"
+        })
+      } catch {
+        errorAlert('No pudimos generear el detalle, contacte con CinCout')
+      }
+      finally {
+        successAlert("Detalle generado, vea en descargas")
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Error no controlado - contacte a CinCout';
+      successAlert(errorMessage)
+    }
+  }
 
   return (
     <>
@@ -123,133 +152,44 @@ export const RangesReport = () => {
                 <div className='rounded-md shadow-lg'>
                   <div className="md:col-span-2 lg:col-span-1" >
                     <div className="h-full py-8 px-6 space-y-6 rounded-xl border border-gray-200 bg-white">
-                      <div>
-                        <h5 className="text-xl text-gray-600 text-center">Monto total</h5>
-                        <div className="mt-2 flex justify-center gap-4">
-                          <h3 className="text-3xl font-bold text-gray-700">{currencyFormat(summary.balance)}</h3>
-                        </div>
+                      <div className='hidden md:block'>
+                        <h5 className="text-xl text-gray-600 text-center">&nbsp;</h5>
                       </div>
                       <table className="w-full text-gray-600">
                         <tbody>
                           <tr>
                             <td className="py-2 font-bold">Total de ventas</td>
-                            <td className="text-gray-500 font-bold">{currencyFormat(summary.sales)}</td>
+                            <td className="text-gray-500 font-bold">{currencyFormat(summary.totalSales)}</td>
                           </tr>
                           <tr>
                             <td className="py-2 font-bold">Total de alquiler</td>
-                            <td className="text-gray-500 font-bold">{currencyFormat(summary.rentals)}</td>
+                            <td className="text-gray-500 font-bold">{currencyFormat(summary.totalRentals)}</td>
                           </tr>
                           <tr>
                             <td className="py-2 font-bold">Total de gastos</td>
-                            <td className="text-gray-500 font-bold">{currencyFormat(summary.expenses)}</td>
+                            <td className="text-gray-500 font-bold">{currencyFormat(summary.totalExpenses)}</td>
+                          </tr>
+                          <tr>
+                            <td className="py-2 font-bold">Total de compras</td>
+                            <td className="text-gray-500 font-bold">{currencyFormat(summary.totalPurchas)}</td>
                           </tr>
                         </tbody>
                       </table>
+                      <button
+                        type='button'
+                        disabled={!loading}
+                        onClick={() => handleDetail()}
+                        className='w-full px-4 py-2 rounded-md  text-center font-semibold bg-yellow-500 text-white'
+                      >
+                        Descargar detalle
+                      </button>
                       <div className='hidden md:block'>
-                    <h5 className="text-xl text-gray-600 text-center">&nbsp;</h5>
-                    <h5 className="text-xl text-gray-600 text-center">&nbsp;</h5>
-                    <h5 className="text-xl text-gray-600 text-center">&nbsp;</h5>
-                  </div>
+                        <h5 className="text-sm text-gray-600 text-center">&nbsp;</h5>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="relative mt-5 flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-lg bg-clip-border">
-              <table className="w-full text-left table-auto min-w-max">
-                <thead>
-                  <tr>
-                    <th className="p-4 border-b border-slate-200 bg-slate-50">
-                      <p className="block text-start font-semibold text-md leading-none text-black">
-                        Fecha
-                      </p>
-                    </th>
-                    <th className="p-4 border-b border-slate-200 bg-slate-50">
-                      <p className="block text-center font-semibold text-md leading-none text-black">
-                        Abrio
-                      </p>
-                    </th>
-                    <th className="p-4 border-b border-slate-200 bg-slate-50">
-                      <p className="block text-center font-semibold text-md leading-none text-black">
-                        Saldo inicial
-                      </p>
-                    </th>
-                    <th className="p-4 border-b border-slate-200 bg-slate-50">
-                      <p className="block text-center font-semibold text-md leading-none text-black">
-                        Bodega
-                      </p>
-                    </th>
-                    <th className="p-4 border-b border-slate-200 bg-slate-50">
-                      <p className="block text-center font-semibold text-md leading-none text-black">
-                        Grass
-                      </p>
-                    </th>
-                    <th className="p-4 border-b border-slate-200 bg-slate-50">
-                      <p className="text-center text-sm block font-semibold leading-none text-black">
-                        Gastos
-                      </p>
-                    </th>
-                    <th className="p-4 border-b border-slate-200 bg-slate-50">
-                      <p className="text-center text-sm block font-semibold leading-none text-black">
-                        Cierre de caja
-                      </p>
-                    </th>
-                    <th className="p-4 border-b border-slate-200 bg-slate-50">
-                      <p className="text-center text-sm block font-semibold leading-none text-black">
-                        Cerro
-                      </p>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {
-                    reports.map(report => (
-                      <tr key={report.id} className="hover:bg-slate-50 border-b border-slate-200">
-                        <td className="p-4 py-5">
-                          <p className="text-start text-md text-black">
-                            {normalizeReport(report.openTime)}
-                          </p>
-                        </td>
-                        <td className="p-4 py-5">
-                          <p className="text-center text-md text-black">
-                            {capitalize(report.openedBy)}
-                          </p>
-                        </td>
-                        <td className="p-4 py-5">
-                          <p className="text-center text-md text-black">
-                            {currencyFormat(report.openingBalance)}
-                          </p>
-                        </td>
-                        <td className="p-4 py-5">
-                          <p className="text-center text-md text-black">
-                            {currencyFormat(report.totalSales)}
-                          </p>
-                        </td>
-                        <td className="p-4 py-5">
-                          <p className="text-center text-md text-black">
-                            {currencyFormat(report.totalRentals)}
-                          </p>
-                        </td>
-                        <td className="p-4 py-5">
-                          <p className="text-center text-md text-black">
-                            {currencyFormat(report.totalExpenses)}
-                          </p>
-                        </td>
-                        <td className="p-4 py-5">
-                          <p className="text-center text-md text-black">
-                            {currencyFormat(report.closingBalance)}
-                          </p>
-                        </td>
-                        <td className="p-4 py-5">
-                          <p className="text-center text-md text-black">
-                            {capitalize(report.closedBy || '-')}
-                          </p>
-                        </td>
-                      </tr>
-                    ))
-                  }
-                </tbody>
-              </table>
             </div>
           </>
         )

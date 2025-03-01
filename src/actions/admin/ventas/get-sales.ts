@@ -32,17 +32,7 @@ export const getSales = async ({ id }: Props) => {
                 saleTime: 'desc'
             },
             include: {
-                products: {
-                    include: {
-                        product: {
-                            select: {
-                                id: true,
-                                description: true,
-                                salePrice: true
-                            },
-                        },
-                    },
-                }
+                products: true
             }
         })
 
@@ -54,10 +44,10 @@ export const getSales = async ({ id }: Props) => {
             closedBy: cashRegister.closedBy,
             products: sale.products.map(saleProduct => ({
                 id: saleProduct.id,
-                name: saleProduct.product.description,
+                name: saleProduct.product,
                 quantity: saleProduct.quantity,
-                price: saleProduct.product.salePrice,
-                total: saleProduct.quantity * saleProduct.product.salePrice,
+                price: saleProduct.price,
+                total: saleProduct.total,
             })),
         }));
 

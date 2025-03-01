@@ -6,4 +6,5 @@ export interface ISaleProduct {
     salePrice: number;
     profit: number;
     quantity: number;
+    extra:number;
 }

@@ -37,8 +37,6 @@ export { cashClose } from './punto/cash/cash-close'
 export { cashWithdrawMoney } from './punto/cash/cash-withdraw-money';
 export { openCashAgain } from './punto/cash/open-cash-again';
 
-export { getWeeklyReportReport } from './admin/reports/get-weeklyReport-report';
-export { getCashBalancesForMonth } from './admin/reports/get-cash-balances-for-month';
 export { getRangesBalances } from './admin/reports/get-ranges-balances';
-export { getBalanceAll } from './admin/reports/get-balance-all';
 export { registerUtility } from './admin/reports/register-utility';
+export { getTotals } from './admin/reports/get-totals';

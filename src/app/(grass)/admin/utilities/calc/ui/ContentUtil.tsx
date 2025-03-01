@@ -4,13 +4,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { IoRemoveCircleOutline } from "react-icons/io5";
-import { getBalanceAll, registerUtility } from "@/actions";
-import { capitalize, closeAlert, currencyFormat, errorAlert, loadingAlert, successAlert } from "@/utils";
+import { getRangesBalances, getTotals, registerUtility } from "@/actions";
+import { capitalize, closeAlert, currencyFormat, errorAlert, exportToExcel, loadingAlert, successAlert } from "@/utils";
+import { IReportTotal } from "@/interfaces";
 
-interface IReport {
-    reportCahs: number,
-    reportPurcha: number,
-}
+
 
 interface IUtili {
     id: string;
@@ -26,12 +24,11 @@ export const ContentUtil = () => {
     const [endTime, setDateFin] = useState('');
     const [startTimeS, setDateInitS] = useState('');
     const [endTimeS, setDateFinS] = useState('');
+    const [summary, setSummary] = useState<IReportTotal>();
 
-    const [utilidades, setUtilidades] = useState<IReport>();
-    const [total, setTotal] = useState(0);
-
-    const [gastos, setGastos] = useState<IUtili[]>([]);
-    const [totalGastos, setTotalGastos] = useState(0);
+    const [ingresos, setIngresos] = useState<IUtili[]>([]);
+    const [totalIngresos, setTotalIngresos] = useState(0);
+    const [loading, setLoading] = useState(true);
 
     const { handleSubmit, register, reset, formState: { errors } } = useForm<IUtili>();
 
@@ -50,23 +47,24 @@ export const ContentUtil = () => {
     };
 
     const handleBalanceAll = async () => {
+
         loadingAlert('Buscando...');
-        const { status, message, report } = await getBalanceAll({ startTime, endTime });
+
+        const { status, message, report } = await getTotals({ startTime, endTime });
         if (!status) {
             errorAlert(message);
             return;
         }
 
         closeAlert();
-        setUtilidades(report);
+        setSummary(report);
     }
 
     useEffect(() => {
         if (startTime !== '' && endTime !== '') {
-            setUtilidades(undefined);
-            setGastos([]);
-            setTotal(0);
-            setTotalGastos(0);
+            setSummary(undefined);
+            setIngresos([]);
+            setTotalIngresos(0);
             handleBalanceAll();
         }
     }, [startTime, endTime])
@@ -78,36 +76,29 @@ export const ContentUtil = () => {
             price: parseFloat(data.price.toString())
         };
 
-        const newTtotal = total - parsedData.price;
-        setTotal(+parseFloat(`${newTtotal}`).toFixed(2));
-        setGastos([...gastos, parsedData]);
+        // const newTtotal = total - parsedData.price;
+        // setTotal(+parseFloat(`${newTtotal}`).toFixed(2));
+        setIngresos([...ingresos, parsedData]);
         reset({ description: '', price: 0, id: '' });
     }
 
     const handleDelete = (dele: IUtili) => {
-        const newGastos = gastos.filter(p => p.id !== dele.id);
-        setGastos(newGastos);
-        const newTtotal = total + dele.price;
-        setTotal(+parseFloat(`${newTtotal}`).toFixed(2));
+        const newGastos = ingresos.filter(p => p.id !== dele.id);
+        setIngresos(newGastos);
+        const newTtotal = totalIngresos + dele.price;
+        setTotalIngresos(+parseFloat(`${newTtotal}`).toFixed(2));
     }
 
     useEffect(() => {
-        if (utilidades !== undefined) {
-            const subTotal = utilidades.reportCahs - utilidades.reportPurcha;
-            setTotal(+parseFloat(`${subTotal}`).toFixed(2));
-        }
-    }, [utilidades]);
-
-    useEffect(() => {
-        const totalG = gastos.reduce((acc, curr) => acc + curr.price, 0);
-        setTotalGastos(+parseFloat(`${totalG}`).toFixed(2));
-    }, [gastos]);
+        const totalG = ingresos.reduce((acc, curr) => acc + curr.price, 0);
+        setTotalIngresos(+parseFloat(`${totalG}`).toFixed(2));
+    }, [ingresos]);
 
     const handelRegisterUtil = async () => {
 
         loadingAlert('Registrando...');
 
-        const data = { total, startTime, endTime }
+        const data = { total: totalIngresos, startTime, endTime }
         const { status, message } = await registerUtility(data);
 
         if (!status) {
@@ -119,10 +110,58 @@ export const ContentUtil = () => {
         router.replace('/admin/utilities');
     }
 
+    const handleDetail = async () => {
+
+        try {
+            loadingAlert('Generando archivo...');
+            setLoading(false);
+
+
+            const {
+                status,
+                message,
+                newRentals,
+                newSales,
+                newExpenses,
+                newProducts,
+                newPurchaseProducts,
+                newDocuments,
+            } = await getRangesBalances({ startTime, endTime });
+
+            if (!status) {
+                errorAlert(message);
+                return;
+            }
+
+            try {
+                await exportToExcel({
+                    detailData: {
+                        newRentals,
+                        newSales,
+                        newExpenses,
+                        newProducts,
+                        newPurchaseProducts,
+                        newDocuments,
+                        summary: summary || { totalExpenses: 0, totalPurchas: 0, totalRentals: 0, totalSales: 0 }
+                    },
+                    title: 'Reporte_utilidad_detallado'
+                })
+            } catch {
+                errorAlert('No pudimos generear el detalle, contacte con CinCout')
+            }
+            finally {
+                successAlert("Detalle generado, vea en descargas")
+            }
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Error no controlado - contacte a CinCout';
+            successAlert(errorMessage)
+        }
+    }
+
     return (
         <>
             <div className="transition-all mt-2 duration-300 bg-white p-4 rounded-lg shadow-md border-l-4 border-blue-600">
-                <h2 className="text-2xl font-semibold mb-2 text-blue-600">Calcular utilidad</h2>
+                <h2 className="text-2xl font-semibold mb-2 text-blue-600">Registrar utilidad</h2>
                 <div className='w-full flex flex-col md:flex-row justify-center gap-2 items-center'>
                     <div className='w-full md:w-2/6'>
                         <span>Inicio</span>
@@ -146,42 +185,39 @@ export const ContentUtil = () => {
                         />
                     </div>
                 </div>
-                {(utilidades) &&
+                {(summary) &&
                     (<>
+                        <div className='w-full flex flex-col items-center mt-3 md:w-12/12'>
+                            <button
+                                disabled={!loading}
+                                onClick={() => handleDetail()}
+                                className="w-[200px] md:w-[300px] text-center  rounded bg-yellow-500 py-2.5 text-md font-semibold text-white"
+                                type="button"
+                            >
+                                Descargar reporte
+                            </button>
+                        </div>
                         <div className='w-full flex flex-col md:flex-row justify-center gap-2 items-center'>
                             <div className='w-full md:w-3/6'>
                                 <div className='mt-2 rounded-md shadow-lg'>
                                     <div className="h-full py-8 px-6 space-y-6  rounded-xl border border-gray-200 bg-white">
                                         <>
+                                            <p className="hidden text-lg md:block">&nbsp;</p>
                                             <h5 className="text-xl text-gray-600 text-center font-bold">Utilidad total</h5>
                                             <div className="mt-2 flex justify-center gap-4">
-                                                <h3 className="text-3xl font-bold text-gray-700">{currencyFormat(total)}</h3>
+                                                <h3 className="text-3xl font-bold text-gray-700">{currencyFormat(totalIngresos)}</h3>
                                             </div>
                                         </>
-                                        <table className="w-full text-gray-600">
-                                            <tbody>
-                                                <tr>
-                                                    <td className="py-2 font-bold">Utlidad del mes</td>
-                                                    <td className="text-gray-500 font-bold">{currencyFormat(utilidades.reportCahs)}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td className="py-2 font-bold">Compras del mes</td>
-                                                    <td className="text-gray-500 font-bold">{currencyFormat(utilidades.reportPurcha)}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td className="py-2 font-bold">Total de gastos</td>
-                                                    <td className="text-gray-500 font-bold">{currencyFormat(totalGastos)}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <div className='flex justify-center mt-5 mb-5'>
+                                        <div className='flex flex-col gap-4 items-center mt-5 mb-5'>
                                             <button
                                                 onClick={() => handelRegisterUtil()}
                                                 className="w-[200px] md:w-[300px] text-center  rounded bg-orange-600 py-2.5 text-md font-semibold text-white"
                                                 type="button"
+                                                disabled={ingresos.length <= 0}
                                             >
                                                 Registrar utilidad
                                             </button>
+                                            <p className="hidden md:block">&nbsp;</p>
                                         </div>
                                     </div>
                                 </div>
@@ -202,7 +238,7 @@ export const ContentUtil = () => {
                                                 {errors.description && (<span className="text-red-500 font-mono">{errors.description?.message}</span>)}
                                             </div>
                                             <div className="flex flex-col mb-2">
-                                                <span>Total del gasto</span>
+                                                <span>Total del ingreso</span>
                                                 <input
                                                     type="text"
                                                     className="p-2 border rounded-md bg-gray-200"
@@ -222,12 +258,10 @@ export const ContentUtil = () => {
                                                     className="w-[200px] md:w-[300px]  text-center  rounded bg-slate-800 py-2.5 text-md font-semibold text-white"
                                                     type="submit"
                                                 >
-                                                    Agregar gasto
+                                                    Agregar ingreso
                                                 </button>
                                             </div>
                                         </form>
-
-                                        <p className="hidden md:block">&nbsp;</p>
                                     </div>
                                 </div>
                             </div>
@@ -243,7 +277,7 @@ export const ContentUtil = () => {
                                         </th>
                                         <th className="p-4 border-b border-slate-200 bg-slate-50">
                                             <p className="text-center text-sm block font-semibold leading-none ttext-black">
-                                                Total del gasto
+                                                Total del ingreso
                                             </p>
                                         </th>
                                         <th
@@ -256,7 +290,7 @@ export const ContentUtil = () => {
                                 </thead>
                                 <tbody>
                                     {
-                                        gastos.map((gast) => (
+                                        ingresos.map((gast) => (
                                             <tr key={gast.id} className="hover:bg-slate-50 border-b border-slate-200">
                                                 <td className="p-4 py-5">
                                                     <p className="text-md text-black">

@@ -31,7 +31,6 @@ export const PaginationModal = ({ totalPages, onPageChange, currentPage }: Props
                             <IoChevronBackOutline size={30} />
                         </button>
                     </li>
-
                     {
                         [...Array(totalPages)].map((_, index) => (
                             <li key={index} className="page-item">
@@ -52,7 +51,6 @@ export const PaginationModal = ({ totalPages, onPageChange, currentPage }: Props
                             </li>
                         ))
                     }
-
                     <li className="page-item">
                         <button
                             type='button'

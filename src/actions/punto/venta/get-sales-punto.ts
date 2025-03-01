@@ -36,29 +36,27 @@ export const getSalesPunto = async () => {
             },
             include: {
                 products: {
-                    include: {
-                        product: {
-                            select: {
-                                id: true,
-                                description: true,
-                                salePrice: true
-                            },
-                        },
-                    },
+                    select: {
+                        id: true,
+                        product: true,
+                        price: true,
+                        quantity: true,
+                        total: true
+                    }
                 }
             }
         })
 
         const ventas = sales.map(sale => ({
             id: sale.id,
-            total: sale.total,       //* Total de la venta
-            saleTime: sale.saleTime, //* Hora de la venta
+            total: sale.total,
+            saleTime: sale.saleTime,
             products: sale.products.map(saleProduct => ({
                 id: saleProduct.id,
-                name: saleProduct.product.description,
+                name: saleProduct.product,
                 quantity: saleProduct.quantity,
-                price: saleProduct.product.salePrice,
-                total: saleProduct.quantity * saleProduct.product.salePrice,
+                price: saleProduct.price,
+                total: saleProduct.total
             })),
         }));
 

@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import { getCashBalancesForMonth } from '@/actions';
-import { closeAlert, currencyFormat, errorAlert, loadingAlert, processCashBalancesForChart } from '@/utils';
+import { getRangesBalances, getTotals } from '@/actions';
+import { closeAlert, currencyFormat, errorAlert, exportToExcel, loadingAlert, normalizrMonth, processCashBalancesForChart, successAlert } from '@/utils';
 import { LineChartComponent } from './LineChartComponent';
+import { IReportTotal } from '@/interfaces';
 
 interface CashBalanceData {
   labels: string[]; //* Fechas de los días
@@ -15,19 +16,13 @@ interface CashBalanceData {
   }[];
 }
 
-interface IMonth {
-  totalSales: number;
-  totalRentals: number;
-  totalExpenses: number;
-  closingBalance: number;
-}
-
 export const MonthlyReport = () => {
 
   const [viewDate, setViewDate] = useState('');
   const [control, setControl] = useState('');
   const [cashBalance, setCashBalance] = useState<CashBalanceData>();
-  const [month, setMonth] = useState<IMonth>();
+  const [summary, setSummary] = useState<IReportTotal>();
+  const [loading, setLoading] = useState(true);
 
   const onChangeSearch = (target: EventTarget & HTMLInputElement) => {
     if (target.value !== '') {
@@ -36,15 +31,19 @@ export const MonthlyReport = () => {
   };
 
   const handlerMonthlyReport = async () => {
+
     loadingAlert('Buscando....');
-    const { cashRegisters, report, status, message } = await getCashBalancesForMonth(viewDate);
+
+    const { startOfMonth, endOfMonth } = normalizrMonth(viewDate)
+
+    const { cashRegisters, report, status, message } = await getTotals({ startTime: startOfMonth, endTime: endOfMonth });
 
     if (!status) {
       errorAlert(message);
       return;
     }
 
-    setMonth(report);
+    setSummary(report);
     const process = processCashBalancesForChart(cashRegisters);
     setCashBalance(process);
     closeAlert();
@@ -58,6 +57,55 @@ export const MonthlyReport = () => {
       }
     }
   }, [viewDate])
+
+  const handleDetail = async () => {
+
+    try {
+      loadingAlert('Generando archivo...');
+      setLoading(false);
+
+      const { startOfMonth, endOfMonth } = normalizrMonth(viewDate)
+
+      const {
+        status,
+        message,
+        newRentals,
+        newSales,
+        newExpenses,
+        newProducts,
+        newPurchaseProducts,
+        newDocuments,
+      } = await getRangesBalances({ startTime: startOfMonth, endTime: endOfMonth });
+
+      if (!status) {
+        errorAlert(message);
+        return;
+      }
+
+      try {
+        await exportToExcel({
+          detailData: {
+            newRentals,
+            newSales,
+            newExpenses,
+            newProducts,
+            newPurchaseProducts,
+            newDocuments,
+            summary: summary || { totalExpenses: 0, totalPurchas: 0, totalRentals: 0, totalSales: 0 }
+          },
+          title: 'Reporte_mensual_detallado'
+        })
+      } catch {
+        errorAlert('No pudimos generear el detalle, contacte con CinCout')
+      }
+      finally {
+        successAlert("Detalle generado, vea en descargas")
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Error no controlado - contacte a CinCout';
+      successAlert(errorMessage)
+    }
+  }
 
   return (
     <>
@@ -74,43 +122,50 @@ export const MonthlyReport = () => {
       </div>
       <div className='p-3 grid items-center grid-cols-1 md:grid-cols-2 gap-2 mt-5'>
         <div className='rounded-md shadow-lg'>
-          { 
+          {
             (cashBalance) &&
             (<LineChartComponent data={cashBalance} title={'Evolución de Saldos de Caja Durante el Mes'} />)
           }
         </div>
         <div className=' rounded-md shadow-lg'>
           {
-            (month) &&
+            (summary) &&
             (
               <div className="md:col-span-2 lg:col-span-1" >
                 <div className="h-full py-8 px-6 space-y-6 rounded-xl border border-gray-200 bg-white">
-                  <div>
-                    <h5 className="text-xl text-gray-600 text-center">Saldo total</h5>
-                    <div className="mt-2 flex justify-center gap-4">
-                      <h3 className="text-3xl font-bold text-gray-700">{currencyFormat(month.closingBalance)}</h3>
-                    </div>
+                  <div className='hidden md:block'>
+                    <h5 className="text-xl text-gray-600 text-center">&nbsp;</h5>
                   </div>
                   <table className="w-full text-gray-600">
                     <tbody>
                       <tr>
                         <td className="py-2 font-bold">Total de ventas</td>
-                        <td className="text-gray-500 font-bold">{currencyFormat(month.totalSales)}</td>
+                        <td className="text-gray-500 font-bold">{currencyFormat(summary.totalSales)}</td>
                       </tr>
                       <tr>
                         <td className="py-2 font-bold">Total de alquiler</td>
-                        <td className="text-gray-500 font-bold">{currencyFormat(month.totalRentals)}</td>
+                        <td className="text-gray-500 font-bold">{currencyFormat(summary.totalRentals)}</td>
                       </tr>
                       <tr>
                         <td className="py-2 font-bold">Total de gastos</td>
-                        <td className="text-gray-500 font-bold">{currencyFormat(month.totalExpenses)}</td>
+                        <td className="text-gray-500 font-bold">{currencyFormat(summary.totalExpenses)}</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2 font-bold">Total de compras</td>
+                        <td className="text-gray-500 font-bold">{currencyFormat(summary.totalPurchas)}</td>
                       </tr>
                     </tbody>
                   </table>
+                  <button
+                    type='button'
+                    disabled={!loading}
+                    onClick={() => handleDetail()}
+                    className='w-full px-4 py-2 rounded-md  text-center font-semibold bg-yellow-500 text-white'
+                  >
+                    Descargar detalle
+                  </button>
                   <div className='hidden md:block'>
-                    <h5 className="text-xl text-gray-600 text-center">&nbsp;</h5>
-                    <h5 className="text-xl text-gray-600 text-center">&nbsp;</h5>
-                    <h5 className="text-xl text-gray-600 text-center">&nbsp;</h5>
+                    <h5 className="text-sm text-gray-600 text-center">&nbsp;</h5>
                   </div>
                 </div>
               </div>

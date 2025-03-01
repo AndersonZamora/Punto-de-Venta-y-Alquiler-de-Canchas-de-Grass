@@ -30,7 +30,7 @@ export default async function PuntoPage() {
             rederi={'/punto/ventas'}
           />
           <ItemsCard
-            icon={<IoKeyOutline className='w-8 h-8 text-white' />}
+            icon={<IoBaseballSharp className='w-8 h-8 text-white' />}
             title={'Total de alquiler'}
             classNa='mb-6'
             quantity={`${cashRegister?.totalRentals ? currencyFormat(cashRegister.totalRentals) : '0'}`}
@@ -49,13 +49,6 @@ export default async function PuntoPage() {
             classNa='mb-6'
             quantity={''}
             rederi={'/punto/bodega'}
-          />
-          <ItemsCard
-            classNa='mb-6'
-            title={'Grass'}
-            quantity={''}
-            rederi={'/punto/grass'}
-            icon={<IoBaseballSharp className='w-8 h-8 text-white' />}
           />
         </div>
       </div>

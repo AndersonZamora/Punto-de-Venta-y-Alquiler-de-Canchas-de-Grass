@@ -18,7 +18,7 @@ interface Props {
 }
 
 export const BoletaForm = ({ sales }: Props) => {
-
+ 
     const { handleSubmit, register, formState: { errors, isValid } } = useForm<InputsBoleta>();
     const clearCart = useSaleStore(state => state.clearCart);
     const router = useRouter();

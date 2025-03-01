@@ -99,9 +99,10 @@ export const registerSale = async ({ productIds }: Props) => {
                     cashRegisterId: cashRegister?.id || '1',
                     products: {
                         create: productIds.map((product) => ({
-                            productId: product.id,
+                            product: product.description,
+                            price: product.salePrice,
                             quantity: product.quantity,
-                            total: +parseFloat(`${product.quantity * product.salePrice}`).toFixed(),
+                            total: +parseFloat(`${product.quantity * product.salePrice}`).toFixed(2),
                         })),
                     },
                 },

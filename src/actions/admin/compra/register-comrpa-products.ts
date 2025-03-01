@@ -11,6 +11,7 @@ interface SaleP {
     salePrice: number;
     profit: number;
     quantity: number;
+    extra: number;
 }
 
 interface Props {
@@ -50,20 +51,25 @@ export const registerComrpaProducts = async ({
                             productId: product.id,
                             quantity: product.quantity,
                             costPrice: product.purchasePrice,
-                            total: +parseFloat(`${product.quantity * product.purchasePrice}`).toFixed()
+                            total: +parseFloat(`${product.quantity * product.purchasePrice}`).toFixed(2)
                         })),
                     }
                 }
             })
 
             const updateStockProduct = sales.map(async product => {
+                const newTotalStock = product.quantity + product.extra;
                 return tx.product.update({
                     where: { id: product.id },
                     data: {
                         state: true,
                         stock: {
-                            increment: product.quantity
+                            increment: +newTotalStock
                         },
+                        profit: +product.profit,
+                        purchasePrice: +product.purchasePrice,
+                        salePrice: +product.salePrice,
+                        profitMargin: +product.profitMargin
                     },
                 });
             })

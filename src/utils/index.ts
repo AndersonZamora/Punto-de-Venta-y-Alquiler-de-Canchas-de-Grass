@@ -4,3 +4,4 @@ export * from './handleAlerts';
 export * from './capitalize';
 export * from './generatePaginate';
 export * from './processData';
+export { exportToExcel } from './export-to-excel'

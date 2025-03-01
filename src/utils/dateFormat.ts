@@ -245,8 +245,53 @@ export const normalizeDateRe = (value: Date) => {
     const valueU = convertDate(value);
 
     const [fecha, hora] = valueU.split(",");
-    
+
     return `${fecha}`
+}
+
+export const normalizrMonth = (data: string) => {
+
+    //! data = 2024-10
+
+    const [year, month] = data.split('-').map(Number);
+    const startOfMonth = new Date(year, month - 1, 1); //! Primer día del mes
+    const endOfMonth = new Date(year, month, 0); //! Último día del mes
+
+    return {
+        startOfMonth: startOfMonth.toISOString(),
+        endOfMonth: endOfMonth.toISOString(),
+    }
+}
+
+export const normalizrWeekly = (selectWeekly: Date) => {
+
+
+    //! selectWeekly = Mon Oct 21 2024 00:00:00 GMT-0600 (hora estándar central)
+
+    const dayOfWeek = selectWeekly.getDay();
+
+    //! Ajustar para que el lunes sea el primer día de la semana
+    const startOfWeek = new Date(selectWeekly);
+    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; //! Si es domingo, retrocede 6 días, si no, ajusta al lunes
+    startOfWeek.setDate(selectWeekly.getDate() + diff);
+
+    //! Establecer el domingo como último día de la semana
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6); //! Añadir 6 días para llegar al domingo
+
+    return {
+        startOfWeek: startOfWeek.toISOString(),
+        endOfWeek: endOfWeek.toISOString(),
+    }
+}
+
+export const normalizeDateExport = (value: Date) => {
+
+    const valueU = convertDate(value);
+
+    const [fecha, hora] = valueU.split(",");
+
+    return `${fecha} ${hora}`
 }
 
 export const normalizeReport = (value: Date) => {
@@ -264,6 +309,7 @@ export const normalizeReport = (value: Date) => {
 
     return `${capitalize(dayName)} ${day} de ${month} del ${year}`;
 }
+
 
 export const getStartDateOfWeek = (weekString: string) => {
     const [year, week] = weekString.split('-W').map(Number);

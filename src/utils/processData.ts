@@ -1,4 +1,4 @@
-import { convertDate, normalizeDateRe } from './dateFormat';
+import { normalizeDateRe } from './dateFormat';
 
 interface ReportData {
     openTime: Date;
